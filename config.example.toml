@@ -1,0 +1,143 @@
+# Copy to config.toml and edit locally (config.toml is gitignored).
+# Use config.toml OR config.json — not both. If both exist, config.toml wins.
+#
+# Custom path: IFX_LAUNCHPAD_CONFIG=/path/to/config.toml
+#
+# Inherited from ifx-pumpfun-ext / ifx-raydium-ext; extended for three launchpad venues.
+# Secrets (RPC URL, keypair paths) belong in config.toml only — not in this example.
+
+[server]
+host = "127.0.0.1"
+port = 8789
+# Verbose quote/jupiter/snapshot debug logs
+debug = true
+
+[solana]
+# Blockhash, ALT cache, Jupiter, simulate — set rpc_url in local config.toml only
+# Or: export SOLANA_RPC_URL=https://your-rpc-endpoint
+rpc_url = ""
+commitment = "confirmed"
+address_lookup_tables = [
+    # Shared with ifx-raydium-ext (extend with pump / launchpad / DBC accounts)
+    "FNN997LrwgNn9eGrVyJUqna9DknLxHQTBKvdqgWv49ZB",
+]
+
+# Launchpad pool snapshot (bonding curve / virtual pool) — always processed
+[snapshot]
+commitment = "processed"
+# Max accounts per getMultipleAccounts chunk (RPC provider limit)
+batch_size = 100
+
+[ifx]
+program_id = "ifxmwWVVZDmXN2DUVf7wtJYCXTRY4QsL5rzmNkXzxbj"
+public_frames = [
+    "6RNv1eQ7fogEW7R1QGg6dAiddEefGfYgJVtjpvgENtdn",
+]
+
+# Quote mints — pair classifier treats these as "quote"; WSOL == native SOL for routing
+[quotes]
+wsol_mint = "So11111111111111111111111111111111111111112"
+usdc_mint = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+usdt_mint = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB"
+
+[venues.pump]
+program_id = "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P"
+# Pump global / fee config — optional override (defaults to PDA ["global"])
+# global = "4wTV1YmiEkRvAtNtsSGPtUrqRYQMe5SKy2uB4Jjaxnjf"
+
+[venues.raydium_launchpad]
+program_id = "LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj"
+
+[venues.meteora_dbc]
+program_id = "dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN"
+
+# Quote bridge — Jupiter discovers single-hop pool; we build swap ix (no Jupiter swap tx).
+# Prefer flat pools with few accounts — CLMM/Whirlpool/DLMM tick arrays blow tx size.
+[bridge]
+supported_types = ["raydium_amm_v4", "raydium_cpmm"]
+max_swap_accounts = 13
+only_direct_routes = true
+# Jupiter dexes filter — Raydium flat pools only (AMM v4 + CPMM); exclude Whirlpool/CLMM/DLMM
+low_account_dexes = ["Raydium"]
+
+[bridge.raydium_amm_v4]
+program_id = "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8"
+swap_ix_accounts = 8
+
+[bridge.raydium_cpmm]
+program_id = "CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C"
+swap_ix_accounts = 13
+
+# orca_whirlpool — disabled in v1 (tick arrays → 15–20+ accounts per swap ix)
+# [bridge.orca_whirlpool]
+# program_id = "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc"
+
+# Static fallback when Jupiter fails or returns unsupported pool type (optional)
+# [[bridge.fallback_pools]]
+# pool_type = "raydium_cpmm"
+# pool_id = "..."
+# input_mint = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+# output_mint = "So11111111111111111111111111111111111111112"
+
+[jupiter]
+# Pool discovery only — parse single-hop routePlan; do NOT use swapTransaction
+# v6 (quote-api.jup.ag) is sunset; use lite (free, no API key) or api.jup.ag (needs api_key)
+api_url = "https://lite-api.jup.ag/swap/v1"
+enabled = true
+# HTTP timeout for Jupiter quote API (seconds)
+timeout_seconds = 30
+# Local HTTP proxy (Clash/V2Ray etc.), e.g. http://127.0.0.1:7890
+# proxy_url = "http://127.0.0.1:7890"
+# api_key = ""  # only for https://api.jup.ag/swap/v1 — get one at https://portal.jup.ag
+
+[jito]
+# *Mev variants append a tip transfer to tip_account (set > 0 for real Jito bundles)
+enabled = true
+tip_account = "96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5"
+tip_lamports = 1000
+
+[priority_fee]
+default_tier = "medium"
+
+[priority_fee.low]
+micro_lamports = 1_000
+compute_unit_limit = 400_000
+
+[priority_fee.medium]
+micro_lamports = 10_000
+compute_unit_limit = 500_000
+
+[priority_fee.high]
+micro_lamports = 50_000
+compute_unit_limit = 600_000
+
+# Platform fee — quote only (SOL native lamports / USDC / USDT SPL).
+# SOL: credit service_fee.pubkey lamports (UnwrapLamports from user WSOL when needed).
+# USDC/USDT: transfer to operator SPL ATA (pre-create off-chain).
+[service_fee]
+bps = 5
+pubkey = "BKNnVDyzcPGCWnk8zX3Cn2KKhLASk5iTjVpxUW7YTb8P"
+# Optional explicit operator ATAs (derived off-chain if omitted)
+# usdc_ata = "..."
+# usdt_ata = "..."
+
+# sponsoredSwap / sponsoredSwapMev — pubkey co-signs as fee payer; user repays to repay_pubkey
+[sponsor]
+enabled = false
+pubkey = "BKNnVDyzcPGCWnk8zX3Cn2KKhLASk5iTjVpxUW7YTb8P"
+repay_pubkey = "BKNnVDyzcPGCWnk8zX3Cn2KKhLASk5iTjVpxUW7YTb8P"
+keypair_path = "./keys/sponsor.json"
+repay_buffer_percent = 10
+
+[quote]
+debounce_ms = 300
+default_slippage_bps = 100
+rpc_cache_ttl_ms = 2_000
+
+[tx]
+# v0 serialized size gate — omit build variant when exceeded
+max_bytes = 1232
+
+# Venue detect when multiple pool accounts decode (rare)
+[detect]
+venue_priority = ["pumpfun", "raydium_launchpad", "meteora_dbc"]

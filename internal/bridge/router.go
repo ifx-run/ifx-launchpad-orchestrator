@@ -1,0 +1,125 @@
+package bridge
+
+import (
+	"fmt"
+
+	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/bridge/ammv4"
+	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/bridge/cpmm"
+	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
+	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/logx"
+	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
+	"github.com/gagliardetto/solana-go"
+	"github.com/gagliardetto/solana-go/rpc"
+)
+
+type Router struct {
+	cfg *config.Config
+}
+
+func NewRouter(cfg *config.Config) *Router {
+	return &Router{cfg: cfg}
+}
+
+type SwapBuildParams struct {
+	Pool         *DiscoveredPool
+	PoolAccount  *rpc.Account
+	User         solana.PublicKey
+	InputATA     solana.PublicKey
+	OutputATA    solana.PublicKey
+	AmountIn     uint64
+	MinAmountOut uint64
+}
+
+func (r *Router) BuildSwap(p SwapBuildParams) (solana.Instruction, error) {
+	switch p.Pool.PoolType {
+	case PoolRaydiumAMMv4:
+		return r.buildAmmV4Swap(p)
+	case PoolRaydiumCPMM:
+		return r.buildCpmmSwap(p)
+	default:
+		return nil, fmt.Errorf("bridge swap build not implemented for %s", p.Pool.PoolType)
+	}
+}
+
+func (r *Router) buildAmmV4Swap(p SwapBuildParams) (solana.Instruction, error) {
+	if p.PoolAccount == nil || p.PoolAccount.Data == nil {
+		return nil, fmt.Errorf("amm v4 pool account missing")
+	}
+	state, err := ammv4.DecodePoolState(p.PoolAccount.Data.GetBinary())
+	if err != nil {
+		return nil, err
+	}
+	programID, err := solpkg.ParsePubkey(r.cfg.Bridge.RaydiumAMMv4.ProgramID)
+	if err != nil {
+		return nil, err
+	}
+	poolPK, err := solpkg.ParsePubkey(p.Pool.PoolID)
+	if err != nil {
+		return nil, err
+	}
+	inMint, err := solpkg.ParsePubkey(p.Pool.InputMint)
+	if err != nil {
+		return nil, err
+	}
+	outMint, err := solpkg.ParsePubkey(p.Pool.OutputMint)
+	if err != nil {
+		return nil, err
+	}
+	logx.Debug("bridge", "build amm v4 swap",
+		"poolId", p.Pool.PoolID,
+		"coinMint", state.BaseMint.String(),
+		"pcMint", state.QuoteMint.String(),
+		"amountIn", p.AmountIn,
+	)
+	return ammv4.BuildSwapBaseInV2(ammv4.SwapParams{
+		ProgramID:     programID,
+		Payer:         p.User,
+		Pool:          state,
+		PoolID:        poolPK,
+		UserInputATA:  p.InputATA,
+		UserOutputATA: p.OutputATA,
+		InputMint:     inMint,
+		OutputMint:    outMint,
+		TokenProgram:  solana.TokenProgramID,
+		AmountIn:      p.AmountIn,
+		MinAmountOut:  p.MinAmountOut,
+	})
+}
+
+func (r *Router) buildCpmmSwap(p SwapBuildParams) (solana.Instruction, error) {
+	if p.PoolAccount == nil || p.PoolAccount.Data == nil {
+		return nil, fmt.Errorf("cpmm pool account missing")
+	}
+	state, err := cpmm.DecodePoolState(p.PoolAccount.Data.GetBinary())
+	if err != nil {
+		return nil, err
+	}
+	programID, err := solpkg.ParsePubkey(r.cfg.Bridge.RaydiumCPMM.ProgramID)
+	if err != nil {
+		return nil, err
+	}
+	poolPK, err := solpkg.ParsePubkey(p.Pool.PoolID)
+	if err != nil {
+		return nil, err
+	}
+	inMint, err := solpkg.ParsePubkey(p.Pool.InputMint)
+	if err != nil {
+		return nil, err
+	}
+	outMint, err := solpkg.ParsePubkey(p.Pool.OutputMint)
+	if err != nil {
+		return nil, err
+	}
+	return cpmm.BuildSwapBaseInput(cpmm.SwapParams{
+		ProgramID:     programID,
+		Payer:         p.User,
+		Pool:          state,
+		PoolID:        poolPK,
+		UserInputATA:  p.InputATA,
+		UserOutputATA: p.OutputATA,
+		InputMint:     inMint,
+		OutputMint:    outMint,
+		AmountIn:      p.AmountIn,
+		MinAmountOut:  p.MinAmountOut,
+	})
+}

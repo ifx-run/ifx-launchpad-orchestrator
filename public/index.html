@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Launchpad Orchestrator</title>
+  <link rel="stylesheet" href="/styles.css?v=14" />
+  <script type="importmap">
+  {
+    "imports": {
+      "@solana/web3.js": "https://esm.sh/@solana/web3.js@1.98.4"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div class="app-shell">
+    <div class="panel-left">
+      <header class="topbar">
+        <div class="topbar-brand">
+          <h1>Launchpad Orchestrator</h1>
+          <p class="powered-by">Powered by <a href="https://github.com/ifx-run/ifx" target="_blank" rel="noopener noreferrer">Ifx</a></p>
+        </div>
+        <div class="topbar-actions">
+          <button id="connectBtn" type="button" class="wallet-btn">Connect wallet</button>
+          <button id="disconnectBtn" type="button" class="wallet-btn secondary" hidden>Disconnect</button>
+        </div>
+      </header>
+
+      <section class="card swap-card">
+        <div class="token-box">
+          <div class="token-box-head">
+            <span>Pay</span>
+            <div class="head-right">
+              <span id="fromBalance" class="balance">Balance —</span>
+              <button type="button" id="maxBtn" class="text-btn" hidden>MAX</button>
+              <label class="inline-setting">
+                Slippage
+                <input id="slippage" type="number" min="0" max="50" step="0.1" value="1" />
+                %
+              </label>
+            </div>
+          </div>
+          <div class="token-row">
+            <input id="fromMint" class="mint-input" type="text" placeholder="Input mint" spellcheck="false" autocomplete="off" />
+            <input id="inputAmount" class="amount-input" type="text" placeholder="Amount" inputmode="decimal" />
+          </div>
+          <div id="fromQuoteChips" class="quote-chips"></div>
+        </div>
+
+        <button id="flipBtn" type="button" class="flip-btn" title="Swap sides">⇅</button>
+
+        <div class="token-box">
+          <div class="token-box-head">
+            <span>Receive</span>
+            <span id="toBalance" class="balance">Balance —</span>
+          </div>
+          <div class="token-row">
+            <input id="toMint" class="mint-input" type="text" placeholder="Output mint" spellcheck="false" autocomplete="off" />
+            <input id="outputAmount" class="amount-input" type="text" placeholder="—" readonly tabindex="-1" />
+          </div>
+          <div id="toQuoteChips" class="quote-chips"></div>
+        </div>
+
+        <p class="hint">Choosing <strong>Native SOL</strong> unwraps WSOL to wallet lamports on-chain; <strong>WSOL</strong> keeps the SPL token account (same mint address).</p>
+
+        <p id="statusMsg" class="status">Enter two mints and an input amount</p>
+
+        <button id="quoteBtn" type="button" class="primary quote-only-btn">Quote</button>
+      </section>
+    </div>
+
+    <aside class="panel-right">
+      <div class="inspector-header">
+        <h2>Transaction</h2>
+        <p id="inspectorStatus" class="inspector-status muted">Quote first, then simulate and send here</p>
+      </div>
+
+      <div class="tx-actions">
+        <div class="variant-toggles">
+          <div id="settlementModeWrap" class="settlement-mode-wrap hidden">
+            <span class="muted-label">Full unwrap</span>
+            <button type="button" class="chip-btn settlement-mode-btn" data-settle-mode="close">Close ATA</button>
+            <button type="button" class="chip-btn settlement-mode-btn" data-settle-mode="unwrapAll">UnwrapLamports</button>
+          </div>
+          <div class="variant-toggle-item">
+            <label class="toggle-label" for="mevToggle">
+              <input id="mevToggle" type="checkbox" />
+              MEV protection
+            </label>
+            <p id="mevToggleHint" class="toggle-hint hidden" aria-live="polite"></p>
+          </div>
+          <div class="variant-toggle-item">
+            <label class="toggle-label" for="sponsoredToggle">
+              <input id="sponsoredToggle" type="checkbox" />
+              Sponsored swap
+            </label>
+            <p id="sponsoredToggleHint" class="toggle-hint hidden" aria-live="polite"></p>
+          </div>
+        </div>
+        <div class="tx-action-row">
+          <button id="simulateBtn" type="button" class="secondary" disabled>Simulate</button>
+          <button id="sendBtn" type="button" class="primary" disabled>Send</button>
+        </div>
+      </div>
+
+      <div id="simBanner" class="sim-banner hidden"></div>
+
+      <div id="inspectorTx" class="inspector-card hidden"></div>
+      <div id="inspectorFee" class="inspector-card hidden"></div>
+      <div id="inspectorRoute" class="inspector-card hidden"></div>
+      <div id="inspectorMeta" class="inspector-meta hidden"></div>
+      <div id="inspectorInstructions" class="inspector-instructions"></div>
+
+      <details id="inspectorRaw" class="inspector-raw hidden">
+        <summary>Raw JSON</summary>
+        <pre id="inspectorRawPre"></pre>
+      </details>
+    </aside>
+  </div>
+
+  <script type="module" src="/app.js?v=18"></script>
+</body>
+</html>
