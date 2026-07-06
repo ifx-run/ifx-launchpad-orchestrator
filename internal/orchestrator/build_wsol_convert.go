@@ -261,7 +261,7 @@ func (s *Service) compileSettlementBuilds(
 				continue
 			}
 
-			ixs := append([]solana.Instruction(nil), plan.Instructions...)
+			ixs := stripComputeBudgetIxs(plan.Instructions)
 			feePayer := plan.User
 			if mode.Sponsored {
 				feePayer = sponsor.Pubkey

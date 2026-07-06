@@ -612,6 +612,10 @@ func userQuoteATA(user, mint solana.PublicKey, accounts map[solana.PublicKey]*rp
 	return solpkg.SelectATA(pair, mintAcct.Owner), nil
 }
 
+func priorityTierDisabled(tier config.PriorityFeeTier) bool {
+	return tier.ComputeUnitLimit == 0 && tier.MicroLamports == 0
+}
+
 func computebudgetIx(tier config.PriorityFeeTier) []solana.Instruction {
 	return []solana.Instruction{
 		computebudget.NewSetComputeUnitLimitInstruction(tier.ComputeUnitLimit).Build(),
@@ -620,9 +624,13 @@ func computebudgetIx(tier config.PriorityFeeTier) []solana.Instruction {
 }
 
 // prependComputeBudget strips any embedded compute-budget ixs and prepends one pair.
+// When tier is disabled (zero limit and price), no compute-budget ixs are added.
 func prependComputeBudget(tier config.PriorityFeeTier, ixs []solana.Instruction) []solana.Instruction {
-	out := computebudgetIx(tier)
-	return append(out, stripComputeBudgetIxs(ixs)...)
+	stripped := stripComputeBudgetIxs(ixs)
+	if priorityTierDisabled(tier) {
+		return stripped
+	}
+	return append(computebudgetIx(tier), stripped...)
 }
 
 func stripComputeBudgetIxs(ixs []solana.Instruction) []solana.Instruction {
