@@ -3,12 +3,12 @@ package snapshot
 import (
 	"fmt"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue/meteora_dbc"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue/pumpfun"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue/raydium_launchpad"
 	"github.com/gagliardetto/solana-go"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue/meteora_dbc"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue/pumpfun"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue/raydium_launchpad"
 )
 
 type venueCandidate struct {

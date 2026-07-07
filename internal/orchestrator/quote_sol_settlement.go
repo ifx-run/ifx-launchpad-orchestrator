@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/logx"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/route"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/snapshot"
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/util"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/logx"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/route"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/snapshot"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/util"
 )
 
 func (s *Service) quoteSOLSettlement(ctx context.Context, in QuoteInput, start time.Time) (*QuoteResult, error) {

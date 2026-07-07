@@ -3,11 +3,11 @@ package orchestrator
 import (
 	"testing"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/programs/compute-budget"
 	"github.com/gagliardetto/solana-go/programs/system"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
 )
 
 func hasComputeBudgetIxs(ixs []solana.Instruction) bool {

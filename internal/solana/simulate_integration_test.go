@@ -10,11 +10,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 )
 
 func TestPumpBuyTx_simulateRPC(t *testing.T) {
@@ -60,7 +60,7 @@ func TestPumpBuyTx_simulateRPC(t *testing.T) {
 		BaseTokenProgram: solana.TokenProgramID,
 		SpendableQuoteIn: 10_000_000, MinBaseOut: 1, ServiceFeeLamports: 100_000,
 		PlatformFeePubkey: solana.MustPublicKeyFromBase58(cfg.ServiceFee.Pubkey),
-		ComputeUnitLimit: 200_000, ComputeUnitPrice: 1_000,
+		ComputeUnitLimit:  200_000, ComputeUnitPrice: 1_000,
 	})
 	if err != nil {
 		t.Fatal(err)

@@ -3,7 +3,7 @@ package orchestrator
 import (
 	"context"
 
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
 )
 
 func (s *Service) InspectTransaction(b64 string) (*solpkg.TxInspection, error) {

@@ -3,13 +3,13 @@ package bridge
 import (
 	"fmt"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/bridge/ammv4"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/bridge/cpmm"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/logx"
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/bridge/ammv4"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/bridge/cpmm"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/logx"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
 )
 
 type Router struct {

@@ -3,8 +3,8 @@ package pumpfun
 import (
 	"fmt"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
 	"github.com/gagliardetto/solana-go"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
 )
 
 // QuoteKind classifies pool quote settlement for build/quote paths.

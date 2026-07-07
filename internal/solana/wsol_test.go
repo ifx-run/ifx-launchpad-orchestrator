@@ -4,8 +4,8 @@ import (
 	"encoding/binary"
 	"testing"
 
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
 	"github.com/gagliardetto/solana-go"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
 )
 
 func TestUnwrapWSOLInstructions_partialUsesUnwrapLamports(t *testing.T) {

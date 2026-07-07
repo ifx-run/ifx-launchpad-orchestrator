@@ -3,11 +3,11 @@ package ifx_test
 import (
 	"testing"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
-	ifxpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/ifx"
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 	"github.com/gagliardetto/solana-go"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
+	ifxpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/ifx"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 )
 
 func TestPlanPumpSellWithSOLFee_includesIfxInstructions(t *testing.T) {
@@ -82,7 +82,7 @@ func TestPlanPumpBuy_noIfxReset(t *testing.T) {
 		BaseMint: mint, User: user, BaseTokenProgram: solana.TokenProgramID,
 		SpendableQuoteIn: 10_000_000, MinBaseOut: 1, ServiceFeeLamports: 100_000,
 		PlatformFeePubkey: solana.MustPublicKeyFromBase58("CebN5WGQ4jvEPvsVU4EoHEpgzq1VV7AbicfhtW4xC9iM"),
-		ComputeUnitLimit: 200_000, ComputeUnitPrice: 1_000,
+		ComputeUnitLimit:  200_000, ComputeUnitPrice: 1_000,
 	})
 	if err != nil {
 		t.Fatal(err)

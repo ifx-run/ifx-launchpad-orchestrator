@@ -1,4 +1,4 @@
-module github.com/chopin65536/ifx-launchpad-orchestrator
+module github.com/ifx-run/ifx-launchpad-orchestrator
 
 go 1.20
 

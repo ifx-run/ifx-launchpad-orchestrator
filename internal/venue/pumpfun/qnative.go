@@ -3,9 +3,9 @@ package pumpfun
 import (
 	"fmt"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
 )
 
 // QNativeFromAccounts reads the pool-native quote mint for a bonding curve.

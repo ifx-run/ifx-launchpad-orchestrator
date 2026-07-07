@@ -1,8 +1,8 @@
 package ifx
 
 import (
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
 	"github.com/gagliardetto/solana-go"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
 	"github.com/ifx-run/ifx/go-sdk/expr"
 	"github.com/ifx-run/ifx/go-sdk/scratch"
 	"github.com/ifx-run/ifx/go-sdk/typed"

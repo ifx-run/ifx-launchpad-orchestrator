@@ -3,10 +3,10 @@ package orchestrator
 import (
 	"context"
 
-	ifxpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/ifx"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/route"
 	"github.com/gagliardetto/solana-go"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
+	ifxpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/ifx"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/route"
 )
 
 type ifxVariantBuilder func(mode VariantMode) ([]solana.Instruction, error)

@@ -5,9 +5,9 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/route"
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
 	"github.com/gagliardetto/solana-go"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/route"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
 )
 
 // PlanBuilder assembles instructions for a specific variant mode.

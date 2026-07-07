@@ -3,10 +3,10 @@ package ifx_test
 import (
 	"testing"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
-	ifxpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/ifx"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 	"github.com/gagliardetto/solana-go"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
+	ifxpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/ifx"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 )
 
 func testCfg() *config.Config {
@@ -30,17 +30,17 @@ func TestPlanPumpSellThenBuySPL_includesIfxChain(t *testing.T) {
 	}, make([]byte, 24))
 
 	ixs, err := ifxpkg.PlanPumpSellThenBuy(cfg, ifxpkg.SellThenBuyParams{
-		QuoteKind:     pumpfun.QuoteSPL,
-		SellTemplate:  sellTpl,
-		BuyTemplate:   buyTpl,
-		ServiceFeeBPS: cfg.ServiceFee.BPS,
-		User:          user,
+		QuoteKind:           pumpfun.QuoteSPL,
+		SellTemplate:        sellTpl,
+		BuyTemplate:         buyTpl,
+		ServiceFeeBPS:       cfg.ServiceFee.BPS,
+		User:                user,
 		PlatformFeePubkey:   user,
 		PlatformFeeQuoteATA: user,
-		QuoteATA:      user,
-		QuoteMint:     user,
-		QuoteTokenProgram: solana.TokenProgramID,
-		QuoteDecimals: 6,
+		QuoteATA:            user,
+		QuoteMint:           user,
+		QuoteTokenProgram:   solana.TokenProgramID,
+		QuoteDecimals:       6,
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -191,4 +191,55 @@ func assertIfxCpi(t *testing.T, cfg *config.Config, ix solana.Instruction) {
 	if ix.ProgramID().String() != cfg.Ifx.ProgramID || len(data) == 0 || data[0] != 6 {
 		t.Fatalf("expected ifx cpi, got program=%s disc=%v", ix.ProgramID(), data)
 	}
+}
+
+func TestPlanQuoteBridgeSponsored_includesRepayChain(t *testing.T) {
+	cfg := testCfg()
+	user := solana.MustPublicKeyFromBase58("BKNnVDyzcPGCWnk8zX3Cn2KKhLASk5iTjVpxUW7YTb8P")
+	bridgeSwap := solana.NewInstruction(solana.SystemProgramID, solana.AccountMetaSlice{
+		{PublicKey: user, IsSigner: true, IsWritable: true},
+	}, []byte{0})
+	unwrapRaw := solana.NewInstruction(solana.TokenProgramID, solana.AccountMetaSlice{
+		{PublicKey: user, IsSigner: true, IsWritable: true},
+	}, []byte{9})
+	var unwrapIx solana.Instruction = unwrapRaw
+
+	ixs, err := ifxpkg.PlanQuoteBridgeSponsored(cfg, ifxpkg.QuoteBridgeParams{
+		BridgeSwap: bridgeSwap,
+		UnwrapWSOL: &unwrapIx,
+		User:       user,
+	}, ifxpkg.SponsoredRepayParams{User: user, RepayTo: user}, 5000, user, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(ixs) < 5 {
+		t.Fatalf("expected sponsored quote bridge chain, got %d instructions", len(ixs))
+	}
+	assertIfxReset(t, cfg, ixs[0])
+	assertIfxCpi(t, cfg, ixs[len(ixs)-1])
+}
+
+func TestPlanQuoteBridgeSponsored_partialUnwrapRepay(t *testing.T) {
+	cfg := testCfg()
+	user := solana.MustPublicKeyFromBase58("BKNnVDyzcPGCWnk8zX3Cn2KKhLASk5iTjVpxUW7YTb8P")
+	wsolATA := solana.MustPublicKeyFromBase58("EoMLb17Wkmys4UTtU82ZAYr6ysuPf1D4DEVq4QZokGFH")
+	bridgeSwap := solana.NewInstruction(solana.SystemProgramID, solana.AccountMetaSlice{
+		{PublicKey: user, IsSigner: true, IsWritable: true},
+	}, []byte{0})
+
+	ixs, err := ifxpkg.PlanQuoteBridgeSponsored(cfg, ifxpkg.QuoteBridgeParams{
+		BridgeSwap:   bridgeSwap,
+		WSOLATA:      wsolATA,
+		User:         user,
+		TokenProgram: solana.TokenProgramID,
+		RepayPartial: true,
+	}, ifxpkg.SponsoredRepayParams{User: user, RepayTo: user}, 5000, user, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(ixs) < 6 {
+		t.Fatalf("expected partial unwrap sponsored chain, got %d instructions", len(ixs))
+	}
+	assertIfxReset(t, cfg, ixs[0])
+	assertIfxCpi(t, cfg, ixs[len(ixs)-1])
 }

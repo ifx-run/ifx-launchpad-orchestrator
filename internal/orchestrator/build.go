@@ -4,16 +4,16 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
-	ifxpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/ifx"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/route"
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/util"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/programs/system"
 	"github.com/gagliardetto/solana-go/rpc"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
+	ifxpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/ifx"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/route"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/util"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 )
 
 type BuildResult struct {

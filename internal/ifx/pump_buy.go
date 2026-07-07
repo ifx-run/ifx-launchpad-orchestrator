@@ -1,9 +1,9 @@
 package ifx
 
 import (
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 	"github.com/gagliardetto/solana-go"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 	"github.com/ifx-run/ifx/go-sdk/patch"
 )
 

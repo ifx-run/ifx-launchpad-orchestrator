@@ -12,8 +12,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/api"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/api"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
 )
 
 func main() {

@@ -3,11 +3,11 @@ package pumpfun
 import (
 	"fmt"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/route"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/util"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/route"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/util"
 )
 
 // QuoteSwapAB quotes sell(A)→quote then buy(B) when both pools share the same Q_native.

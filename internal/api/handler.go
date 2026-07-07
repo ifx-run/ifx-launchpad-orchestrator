@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/logx"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/orchestrator"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/logx"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/orchestrator"
 )
 
 type Server struct {
@@ -98,25 +98,25 @@ func (s *Server) handlePublicConfig(w http.ResponseWriter, r *http.Request) {
 			"usdc": s.cfg.Quotes.USDCMint,
 			"usdt": s.cfg.Quotes.USDTMint,
 		},
-		"jitoEnabled":     s.cfg.Jito.Enabled,
-		"jitoTipLamports": s.cfg.Jito.TipLamports,
-		"sponsorEnabled":  s.cfg.Sponsor.Enabled,
-		"maxTxBytes":     s.cfg.Tx.MaxBytes,
-		"priorityTiers":  []string{"low", "medium", "high"},
+		"jitoEnabled":         s.cfg.Jito.Enabled,
+		"jitoTipLamports":     s.cfg.Jito.TipLamports,
+		"sponsorEnabled":      s.cfg.Sponsor.Enabled,
+		"maxTxBytes":          s.cfg.Tx.MaxBytes,
+		"priorityTiers":       []string{"low", "medium", "high"},
 		"defaultPriorityTier": s.cfg.PriorityFee.DefaultTier,
-		"rpcUrl":         s.cfg.Solana.RPCURL,
+		"rpcUrl":              s.cfg.Solana.RPCURL,
 	})
 }
 
 type quoteRequest struct {
-	InputMint       string `json:"inputMint"`
-	OutputMint      string `json:"outputMint"`
-	InputAmount     string `json:"inputAmount"`
-	InputAmountRaw  string `json:"inputAmountRaw,omitempty"`
-	SlippageBps     int    `json:"slippageBps"`
-	UserPubkey      string `json:"userPubkey"`
-	RecipientPubkey string `json:"recipientPubkey"`
-	PriorityTier    string `json:"priorityTier"`
+	InputMint        string `json:"inputMint"`
+	OutputMint       string `json:"outputMint"`
+	InputAmount      string `json:"inputAmount"`
+	InputAmountRaw   string `json:"inputAmountRaw,omitempty"`
+	SlippageBps      int    `json:"slippageBps"`
+	UserPubkey       string `json:"userPubkey"`
+	RecipientPubkey  string `json:"recipientPubkey"`
+	PriorityTier     string `json:"priorityTier"`
 	InputSettlement  string `json:"inputSettlement"`  // native_sol | wsol_spl | spl
 	OutputSettlement string `json:"outputSettlement"` // native_sol | wsol_spl | spl
 }
@@ -134,14 +134,14 @@ func (s *Server) handleQuote(w http.ResponseWriter, r *http.Request) {
 	}
 
 	in := orchestrator.QuoteInput{
-		InputMint:       strings.TrimSpace(req.InputMint),
-		OutputMint:      strings.TrimSpace(req.OutputMint),
-		InputAmount:     strings.TrimSpace(req.InputAmount),
-		InputAmountRaw:  strings.TrimSpace(req.InputAmountRaw),
-		SlippageBPS:     req.SlippageBps,
-		UserPubkey:      strings.TrimSpace(req.UserPubkey),
-		RecipientPubkey: strings.TrimSpace(req.RecipientPubkey),
-		PriorityTier:    strings.TrimSpace(req.PriorityTier),
+		InputMint:        strings.TrimSpace(req.InputMint),
+		OutputMint:       strings.TrimSpace(req.OutputMint),
+		InputAmount:      strings.TrimSpace(req.InputAmount),
+		InputAmountRaw:   strings.TrimSpace(req.InputAmountRaw),
+		SlippageBPS:      req.SlippageBps,
+		UserPubkey:       strings.TrimSpace(req.UserPubkey),
+		RecipientPubkey:  strings.TrimSpace(req.RecipientPubkey),
+		PriorityTier:     strings.TrimSpace(req.PriorityTier),
 		InputSettlement:  strings.TrimSpace(req.InputSettlement),
 		OutputSettlement: strings.TrimSpace(req.OutputSettlement),
 	}

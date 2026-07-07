@@ -3,7 +3,7 @@ package route_test
 import (
 	"testing"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/route"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/route"
 )
 
 func TestClassifyPair(t *testing.T) {

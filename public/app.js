@@ -257,10 +257,12 @@ function renderQuoteChips() {
       if (target === "from") {
         els.fromMint.value = mint;
         fromSettlement = settlement;
+        clearInputAmountRaw();
         updateFromChipActive();
       } else {
         els.toMint.value = mint;
         toSettlement = settlement;
+        clearInputAmountRaw();
         updateToChipActive();
       }
       scheduleBalanceRefresh();
@@ -482,6 +484,31 @@ function clearInputAmountRaw() {
   lastInputAmountRaw = null;
 }
 
+function uiAmountToRaw(amount, decimals) {
+  const s = String(amount).trim();
+  if (!s) return null;
+  const parts = s.split(".");
+  let whole = parts[0] || "0";
+  let frac = parts[1] || "";
+  if (frac.length > decimals) return null;
+  while (frac.length < decimals) frac += "0";
+  return (whole + frac).replace(/^0+/, "") || "0";
+}
+
+function inputDecimals(mint) {
+  const q = publicConfig?.quoteMints;
+  return mint === q?.wsol ? 9 : 6;
+}
+
+/** Only send inputAmountRaw when it still matches the UI amount (e.g. after MAX). */
+function resolveInputAmountRaw(inputMint, inputAmount) {
+  if (!lastInputAmountRaw) return undefined;
+  const fromUI = uiAmountToRaw(inputAmount, inputDecimals(inputMint));
+  if (fromUI === lastInputAmountRaw) return lastInputAmountRaw;
+  clearInputAmountRaw();
+  return undefined;
+}
+
 function readPair() {
   return {
     inputMint: els.fromMint.value.trim(),
@@ -523,6 +550,7 @@ function flipMints() {
   updateFromChipActive();
   updateToChipActive();
   els.outputAmount.value = "";
+  clearInputAmountRaw();
   lastQuote = null;
   lastSignature = null;
   lastTxStatus = null;
@@ -951,8 +979,9 @@ async function fetchQuote() {
       inputSettlement: resolveInputSettlement(),
       outputSettlement: resolveOutputSettlement(),
     };
-  if (lastInputAmountRaw) {
-    body.inputAmountRaw = lastInputAmountRaw;
+  const inputAmountRaw = resolveInputAmountRaw(pair.inputMint, pair.inputAmount);
+  if (inputAmountRaw) {
+    body.inputAmountRaw = inputAmountRaw;
   }
   const res = await fetch("/api/quote", {
     method: "POST",
@@ -1032,6 +1061,7 @@ els.flipBtn.addEventListener("click", flipMints);
 els.maxBtn.addEventListener("click", fillMaxFrom);
 els.inputAmount.addEventListener("input", clearInputAmountRaw);
 els.fromMint.addEventListener("input", () => {
+  clearInputAmountRaw();
   const q = publicConfig?.quoteMints;
   const mint = els.fromMint.value.trim();
   if (mint !== q?.wsol) fromSettlement = "spl";
@@ -1042,6 +1072,7 @@ els.fromMint.addEventListener("input", () => {
   scheduleBalanceRefresh();
 });
 els.toMint.addEventListener("input", () => {
+  clearInputAmountRaw();
   const q = publicConfig?.quoteMints;
   const mint = els.toMint.value.trim();
   if (mint !== q?.wsol) toSettlement = "spl";

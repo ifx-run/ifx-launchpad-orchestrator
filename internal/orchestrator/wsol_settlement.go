@@ -1,9 +1,9 @@
 package orchestrator
 
 import (
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
 	"github.com/gagliardetto/solana-go"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
 )
 
 const (

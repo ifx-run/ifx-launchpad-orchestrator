@@ -3,8 +3,8 @@ package meteora_dbc
 import (
 	"fmt"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
 	"github.com/gagliardetto/solana-go"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
 )
 
 // CandidateAccounts returns pubkeys for Meteora DBC virtual pool detection.

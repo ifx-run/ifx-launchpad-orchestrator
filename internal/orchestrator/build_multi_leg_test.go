@@ -3,9 +3,9 @@ package orchestrator
 import (
 	"testing"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
 	"github.com/gagliardetto/solana-go"
 	computebudget "github.com/gagliardetto/solana-go/programs/compute-budget"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
 )
 
 func TestStripComputeBudgetIxs_removesOnlyComputeBudget(t *testing.T) {

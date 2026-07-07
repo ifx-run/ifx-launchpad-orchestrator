@@ -3,8 +3,8 @@ package jupiter_test
 import (
 	"testing"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/bridge"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/jupiter"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/bridge"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/jupiter"
 )
 
 func TestLabelToPoolType(t *testing.T) {

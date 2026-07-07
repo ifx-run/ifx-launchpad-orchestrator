@@ -3,9 +3,9 @@ package pumpfun_test
 import (
 	"testing"
 
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 	"github.com/gagliardetto/solana-go"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 )
 
 func TestBuildBuyInstructions_compileValid(t *testing.T) {

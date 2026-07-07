@@ -3,9 +3,9 @@ package orchestrator
 import (
 	"fmt"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/route"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/util"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue/pumpfun"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/route"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/util"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 )
 
 // pumpBuyAmounts holds pump leg sizing for selfFunded vs sponsored (post-repay) paths.
@@ -117,11 +117,11 @@ func (s *Service) sellBridgeAmountsAfterRepay(
 	ataCreates int,
 ) (sellBridgeAmounts, error) {
 	amt := sellBridgeAmounts{
-		GrossBridgeIn:   grossBridgeIn,
+		GrossBridgeIn:     grossBridgeIn,
 		SponsoredBridgeIn: grossBridgeIn,
-		BridgeOutQuoted: bridgeOutQuoted,
-		MinOutGross:     util.MinOut(bridgeOutQuoted, slippageBPS),
-		RepayDeducted:   0,
+		BridgeOutQuoted:   bridgeOutQuoted,
+		MinOutGross:       util.MinOut(bridgeOutQuoted, slippageBPS),
+		RepayDeducted:     0,
 	}
 	amt.MinOutSponsor = amt.MinOutGross
 

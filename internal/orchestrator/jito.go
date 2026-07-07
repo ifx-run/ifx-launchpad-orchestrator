@@ -3,9 +3,9 @@ package orchestrator
 import (
 	"fmt"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/programs/system"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
 )
 
 // JitoTipInstruction returns a SystemProgram transfer to the configured Jito tip account.

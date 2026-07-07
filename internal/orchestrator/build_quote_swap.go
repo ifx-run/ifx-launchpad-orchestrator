@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/bridge"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/route"
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/util"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/bridge"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
+	ifxpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/ifx"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/route"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/util"
 )
 
 func (s *Service) buildQuoteSwap(
@@ -35,7 +36,6 @@ func (s *Service) buildQuoteSwap(
 		return nil, err
 	}
 	inDec := quoteDecimals(s.cfg, in.InputMint)
-	outDec := quoteDecimals(s.cfg, in.OutputMint)
 	inputRaw, err := util.ResolveInputAmount(in.InputAmount, in.InputAmountRaw, inDec)
 	if err != nil {
 		return nil, err
@@ -81,7 +81,10 @@ func (s *Service) buildQuoteSwap(
 	if err := ata.ensure(user, user, outMint, outMintAcct.Owner); err != nil {
 		return nil, err
 	}
-	wsolMint := solana.MustPublicKeyFromBase58(s.cfg.Quotes.WSOLMint)
+	wsolMint, err := solpkg.ParsePubkey(s.cfg.Quotes.WSOLMint)
+	if err != nil {
+		return nil, err
+	}
 	wrapBridgeSOL := shouldWrapSOLForBridge(in, inMint, wsolMint, inputRaw)
 	if wrapBridgeSOL {
 		if err := ata.ensure(user, user, wsolMint, solana.TokenProgramID); err != nil {
@@ -89,12 +92,9 @@ func (s *Service) buildQuoteSwap(
 		}
 	}
 
-	var ixs []solana.Instruction
-	if err := ata.appendTo(&ixs, user); err != nil {
-		return nil, err
-	}
+	var wrapPreflight []solana.Instruction
 	if wrapBridgeSOL {
-		if err := appendWrapSOLDeposit(&ixs, user, user, wsolMint, solana.TokenProgramID, inputRaw); err != nil {
+		if err := appendWrapSOLDeposit(&wrapPreflight, user, user, wsolMint, solana.TokenProgramID, inputRaw); err != nil {
 			return nil, err
 		}
 	}
@@ -112,15 +112,81 @@ func (s *Service) buildQuoteSwap(
 	if err != nil {
 		return nil, err
 	}
-	ixs = append(ixs, swapIx)
 
-	if err := s.appendUnwrapWSOLIfNeeded(&ixs, in.OutputSettlement, outMint, user, wsolMint); err != nil {
-		return nil, err
+	var unwrap *solana.Instruction
+	repayPartial := false
+	if outMint.Equals(wsolMint) && wantsNativeSOL(in.OutputSettlement) {
+		unwrapIx, err := solpkg.CloseWSOLATA(user, wsolMint, solana.TokenProgramID)
+		if err != nil {
+			return nil, err
+		}
+		unwrap = &unwrapIx
+	} else if outMint.Equals(wsolMint) && in.OutputSettlement == SettlementWSOLSPL {
+		repayPartial = true
 	}
 
-	_ = outDec
 	legs := []route.Leg{{Kind: route.LegQuoteBridge, InputMint: in.InputMint, OutputMint: in.OutputMint}}
-	return s.compileVariantsFromIXs(ctx, in, user, tier, ixs, 0, legs, false, ata.count())
+	sponsoredWired := route.QuoteSwapSponsoredEligible(
+		in.InputMint, in.OutputMint, in.InputSettlement, in.OutputSettlement, s.cfg.Quotes.WSOLMint,
+	)
+
+	if !sponsoredWired {
+		var ixs []solana.Instruction
+		if err := ata.appendTo(&ixs, user); err != nil {
+			return nil, err
+		}
+		ixs = append(ixs, wrapPreflight...)
+		ixs = append(ixs, swapIx)
+		if unwrap != nil {
+			ixs = append(ixs, *unwrap)
+		}
+		return s.compileVariantsFromIXs(ctx, in, user, tier, ixs, 0, legs, false, ata.count())
+	}
+
+	bridgeParams := ifxpkg.QuoteBridgeParams{
+		BridgeSwap:   swapIx,
+		UnwrapWSOL:   unwrap,
+		WSOLATA:      userOutATA,
+		User:         user,
+		TokenProgram: outMintAcct.Owner,
+		RepayPartial: repayPartial,
+	}
+
+	return s.compilePreflightVariants(ctx, in, user, tier, 0, legs, ata.count(),
+		func(mode VariantMode) ([]solana.Instruction, error) {
+			var preflight []solana.Instruction
+			if !mode.Sponsored {
+				payer, err := s.ataPayerForMode(mode, user)
+				if err != nil {
+					return nil, err
+				}
+				if err := ata.appendTo(&preflight, payer); err != nil {
+					return nil, err
+				}
+			}
+			preflight = append(preflight, wrapPreflight...)
+			return preflight, nil
+		},
+		func(mode VariantMode) ([]solana.Instruction, error) {
+			if mode.Sponsored {
+				repay, err := s.sponsoredRepayParams(user)
+				if err != nil {
+					return nil, err
+				}
+				sponsor, err := s.sponsorPubkey()
+				if err != nil {
+					return nil, err
+				}
+				fixed := s.fixedSponsoredRepayFeesOnly(tier, mode)
+				return ifxpkg.PlanQuoteBridgeSponsored(s.cfg, bridgeParams, repay, fixed, sponsor, ata.ifxSpecs())
+			}
+			var ixs []solana.Instruction
+			ixs = append(ixs, swapIx)
+			if unwrap != nil {
+				ixs = append(ixs, *unwrap)
+			}
+			return ixs, nil
+		}, true)
 }
 
 func quoteDecimals(cfg *config.Config, mint string) uint8 {

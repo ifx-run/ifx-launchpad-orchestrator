@@ -3,8 +3,8 @@ package solana_test
 import (
 	"testing"
 
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
 	"github.com/gagliardetto/solana-go"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
 )
 
 func TestUnwrapLamportsInstruction_encoding(t *testing.T) {

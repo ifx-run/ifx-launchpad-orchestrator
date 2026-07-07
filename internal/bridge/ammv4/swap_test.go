@@ -3,9 +3,9 @@ package ammv4_test
 import (
 	"testing"
 
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/bridge/ammv4"
 	"github.com/gagliardetto/solana-go"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/bridge/ammv4"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
 )
 
 func TestBuildSwapBaseInV2_compileValid(t *testing.T) {

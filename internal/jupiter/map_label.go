@@ -3,7 +3,7 @@ package jupiter
 import (
 	"strings"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/bridge"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/bridge"
 )
 
 // LabelToPoolType maps Jupiter routePlan swapInfo.label to internal pool type.

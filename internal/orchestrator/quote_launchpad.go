@@ -5,17 +5,17 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/bridge"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/jupiter"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/logx"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/route"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/snapshot"
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/util"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/bridge"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/jupiter"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/logx"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/route"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/snapshot"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/util"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 )
 
 func plannedLaunchpadRoute(in QuoteInput, pairClass route.PairClass, qNative string, isQuote func(string) bool) route.PlannedRoute {

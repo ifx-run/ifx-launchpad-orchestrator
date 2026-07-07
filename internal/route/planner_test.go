@@ -48,6 +48,7 @@ func TestPlanSell_oneLeg(t *testing.T) {
 
 func TestSponsoredRepayEligible_userAssets(t *testing.T) {
 	wsol := "So11111111111111111111111111111111111111112"
+	usdc := "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
 	usdt := "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB"
 	token := "AooGdzgK4PvsbdNoZos4NtStWdkX4z2EpsMp6pYwR9JL"
 	legs := []Leg{
@@ -57,6 +58,21 @@ func TestSponsoredRepayEligible_userAssets(t *testing.T) {
 
 	if !SponsoredRepayEligible(wsol, token, "native_sol", "spl", wsol, nil) {
 		t.Fatal("SOL buy should be sponsored-repay eligible")
+	}
+	if SponsoredRepayEligible(wsol, token, "native_sol", "spl", wsol, []Leg{
+		{Kind: LegQuoteBridge, InputMint: wsol, OutputMint: usdc},
+	}) {
+		t.Fatal("SOL pay quote swap should not be sponsored-repay eligible")
+	}
+	if !SponsoredRepayEligible(usdc, wsol, "spl", "native_sol", wsol, []Leg{
+		{Kind: LegQuoteBridge, InputMint: usdc, OutputMint: wsol},
+	}) {
+		t.Fatal("USDC→native SOL quote swap should be sponsored-repay eligible")
+	}
+	if !SponsoredRepayEligible(usdc, wsol, "spl", "wsol_spl", wsol, []Leg{
+		{Kind: LegQuoteBridge, InputMint: usdc, OutputMint: wsol},
+	}) {
+		t.Fatal("USDC→WSOL SPL quote swap should be sponsored-repay eligible")
 	}
 	if !SponsoredRepayEligible(token, wsol, "spl", "native_sol", wsol, nil) {
 		t.Fatal("sell to native SOL should be sponsored-repay eligible")

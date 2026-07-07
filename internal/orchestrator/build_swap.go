@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
-	ifxpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/ifx"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/route"
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/util"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
+	ifxpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/ifx"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/route"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/util"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 )
 
 func (s *Service) buildPumpSwapTwoLeg(
@@ -89,19 +89,19 @@ func (s *Service) buildPumpSwapTwoLeg(
 	}
 
 	sellParams := pumpfun.BuildParams{
-		Curve:             curveA,
-		BaseMint:          mintA,
-		User:              user,
-		BaseTokenProgram:  mintAcctA.Owner,
-		QuoteMint:         quoteMint,
-		QuoteTokenProgram: quoteTP,
-		CashbackEnabled:   curveA.IsCashbackCoin,
-		BaseAmountIn:      inputRaw,
-		MinQuoteOut:       minGross,
-		PlatformFeePubkey: feePubkey,
+		Curve:               curveA,
+		BaseMint:            mintA,
+		User:                user,
+		BaseTokenProgram:    mintAcctA.Owner,
+		QuoteMint:           quoteMint,
+		QuoteTokenProgram:   quoteTP,
+		CashbackEnabled:     curveA.IsCashbackCoin,
+		BaseAmountIn:        inputRaw,
+		MinQuoteOut:         minGross,
+		PlatformFeePubkey:   feePubkey,
 		PlatformFeeQuoteATA: opFeeATA,
-		ComputeUnitLimit:  tier.ComputeUnitLimit,
-		ComputeUnitPrice:  tier.MicroLamports,
+		ComputeUnitLimit:    tier.ComputeUnitLimit,
+		ComputeUnitPrice:    tier.MicroLamports,
 	}
 	sellTemplate, err := pumpfun.BuildSellCoreIx(sellParams, quoteKind)
 	if err != nil {
@@ -109,19 +109,19 @@ func (s *Service) buildPumpSwapTwoLeg(
 	}
 
 	buyParams := pumpfun.BuildParams{
-		Curve:             curveB,
-		BaseMint:          mintB,
-		User:              user,
-		BaseTokenProgram:  mintAcctB.Owner,
-		QuoteMint:         quoteMint,
-		QuoteTokenProgram: quoteTP,
-		CashbackEnabled:   curveB.IsCashbackCoin,
-		SpendableQuoteIn:  0,
-		MinBaseOut:        minBaseB,
-		PlatformFeePubkey: feePubkey,
+		Curve:               curveB,
+		BaseMint:            mintB,
+		User:                user,
+		BaseTokenProgram:    mintAcctB.Owner,
+		QuoteMint:           quoteMint,
+		QuoteTokenProgram:   quoteTP,
+		CashbackEnabled:     curveB.IsCashbackCoin,
+		SpendableQuoteIn:    0,
+		MinBaseOut:          minBaseB,
+		PlatformFeePubkey:   feePubkey,
 		PlatformFeeQuoteATA: opFeeATA,
-		ComputeUnitLimit:  tier.ComputeUnitLimit,
-		ComputeUnitPrice:  tier.MicroLamports,
+		ComputeUnitLimit:    tier.ComputeUnitLimit,
+		ComputeUnitPrice:    tier.MicroLamports,
 	}
 	buyTemplate, err := pumpfun.BuildBuyCoreIx(buyParams, quoteKindB)
 	if err != nil {

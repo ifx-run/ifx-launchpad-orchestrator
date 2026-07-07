@@ -3,12 +3,12 @@ package ifx
 import (
 	"fmt"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/programs/system"
 	"github.com/gagliardetto/solana-go/programs/token"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 	"github.com/ifx-run/ifx/go-sdk/codec"
 	"github.com/ifx-run/ifx/go-sdk/expr"
 	"github.com/ifx-run/ifx/go-sdk/patch"
@@ -413,7 +413,6 @@ func rawCpiIxScratch(s *scratch.FrameScratch, template solana.Instruction, patch
 	}
 	return s.IxCpi(built.WireBuild())
 }
-
 
 func appendServiceFeeAndNet(
 	_ *config.Config,

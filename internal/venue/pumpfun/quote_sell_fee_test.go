@@ -3,8 +3,8 @@ package pumpfun_test
 import (
 	"testing"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/util"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue/pumpfun"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/util"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 )
 
 func TestQuoteSell_serviceFeeOnMinGross(t *testing.T) {

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
 	"github.com/gagliardetto/solana-go"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
 )
 
 const splATARentLamports = 2_039_280

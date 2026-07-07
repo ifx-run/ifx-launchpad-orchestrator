@@ -1,16 +1,16 @@
 package orchestrator
 
 import (
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
 	"github.com/gagliardetto/solana-go"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
 )
 
 // Build variant keys returned in quote.builds / capabilities.
 const (
-	VariantSelfFunded         = "selfFunded"
-	VariantSelfFundedMev      = "selfFundedMev"
-	VariantSponsoredSwap      = "sponsoredSwap"
-	VariantSponsoredSwapMev   = "sponsoredSwapMev"
+	VariantSelfFunded       = "selfFunded"
+	VariantSelfFundedMev    = "selfFundedMev"
+	VariantSponsoredSwap    = "sponsoredSwap"
+	VariantSponsoredSwapMev = "sponsoredSwapMev"
 )
 
 // VariantMode selects sponsored swap and/or MEV (Jito tip).

@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/bridge"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/logx"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/bridge"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/logx"
 )
 
 type Client struct {

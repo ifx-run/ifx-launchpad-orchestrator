@@ -6,16 +6,16 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/bridge"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/config"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/jupiter"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/logx"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/route"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/snapshot"
-	solpkg "github.com/chopin65536/ifx-launchpad-orchestrator/internal/solana"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/venue/pumpfun"
-	"github.com/chopin65536/ifx-launchpad-orchestrator/internal/util"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/bridge"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/config"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/jupiter"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/logx"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/route"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/snapshot"
+	solpkg "github.com/ifx-run/ifx-launchpad-orchestrator/internal/solana"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/util"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue"
+	"github.com/ifx-run/ifx-launchpad-orchestrator/internal/venue/pumpfun"
 )
 
 type Service struct {
@@ -42,31 +42,31 @@ func NewService(cfg *config.Config) *Service {
 }
 
 type QuoteInput struct {
-	InputMint       string
-	OutputMint      string
-	InputAmount     string
-	InputAmountRaw  string // optional exact raw units (lamports / token base units)
-	SlippageBPS     int
-	UserPubkey      string
-	RecipientPubkey string
-	PriorityTier    string
+	InputMint        string
+	OutputMint       string
+	InputAmount      string
+	InputAmountRaw   string // optional exact raw units (lamports / token base units)
+	SlippageBPS      int
+	UserPubkey       string
+	RecipientPubkey  string
+	PriorityTier     string
 	InputSettlement  string // native_sol | wsol_spl | spl (optional)
 	OutputSettlement string // native_sol | wsol_spl | spl (optional)
 }
 
 type QuoteResult struct {
-	Source            string                    `json:"source"`
-	PairClass         string                    `json:"pairClass"`
-	Route             []route.Leg               `json:"route"`
-	Quote             QuoteSummary              `json:"quote"`
-	Snapshot          SnapshotMeta              `json:"snapshot"`
-	Build             *BuildResult              `json:"build,omitempty"`
-	BuildSkippedReason string                   `json:"buildSkippedReason,omitempty"`
-	BuildError        string                    `json:"buildError,omitempty"`
-	Builds                 map[string]*BuildResult   `json:"builds,omitempty"`
-	Capabilities           map[string]Capability     `json:"capabilities,omitempty"`
-	SettlementFullBalance  bool                      `json:"settlementFullBalance,omitempty"`
-	SettlementModes        []string                  `json:"settlementModes,omitempty"`
+	Source                string                  `json:"source"`
+	PairClass             string                  `json:"pairClass"`
+	Route                 []route.Leg             `json:"route"`
+	Quote                 QuoteSummary            `json:"quote"`
+	Snapshot              SnapshotMeta            `json:"snapshot"`
+	Build                 *BuildResult            `json:"build,omitempty"`
+	BuildSkippedReason    string                  `json:"buildSkippedReason,omitempty"`
+	BuildError            string                  `json:"buildError,omitempty"`
+	Builds                map[string]*BuildResult `json:"builds,omitempty"`
+	Capabilities          map[string]Capability   `json:"capabilities,omitempty"`
+	SettlementFullBalance bool                    `json:"settlementFullBalance,omitempty"`
+	SettlementModes       []string                `json:"settlementModes,omitempty"`
 }
 
 type QuoteSummary struct {
