@@ -254,7 +254,7 @@ func (s *Service) quotePumpLaunchpad(
 		if err != nil {
 			return launchpadQuoteOutcome{}, err
 		}
-		return s.quotePumpSwap(in, snap, baseMint, mintB)
+		return s.quotePumpSwap(in, snap, baseMint, mintB, planned.Legs)
 	}
 	if bridgePool == nil {
 		return launchpadQuoteOutcome{}, fmt.Errorf("bridge pool required for multi-leg quote")
@@ -370,6 +370,7 @@ func (s *Service) quotePumpSwap(
 	in QuoteInput,
 	snap *snapshot.ChainSnapshot,
 	mintA, mintB solana.PublicKey,
+	legs []route.Leg,
 ) (launchpadQuoteOutcome, error) {
 	outcome, err := pumpfun.QuoteSwapAB(s.cfg, snap.Accounts, mintA, mintB, pumpfun.QuoteParams{
 		PairClass:      route.PairSwapLaunchpad,
@@ -383,9 +384,76 @@ func (s *Service) quotePumpSwap(
 	if err != nil {
 		return launchpadQuoteOutcome{}, err
 	}
+
+	minGrossSell := util.MinOut(outcome.GrossOutputAmount, in.SlippageBPS)
+	fee := outcome.ServiceFeeAmount
+	if fee >= minGrossSell {
+		return launchpadQuoteOutcome{}, fmt.Errorf("output too small after service fee")
+	}
+	grossBuyIn := minGrossSell - fee
+
+	if !s.shouldDeductSponsorRepayInQuote(in, legs) {
+		return launchpadQuoteOutcome{
+			OutputAmount:      outcome.OutputAmount,
+			MinOutputAmount:   outcome.MinOutputAmount,
+			GrossOutputAmount: outcome.GrossOutputAmount,
+			ServiceFeeAmount:  outcome.ServiceFeeAmount,
+			ServiceFeeBasis:   "min_gross_quote",
+		}, nil
+	}
+
+	bcPK, err := pumpfun.BondingCurvePDAFromMint(mintB)
+	if err != nil {
+		return launchpadQuoteOutcome{}, err
+	}
+	globalPK, err := pumpfun.GlobalPDA(s.cfg)
+	if err != nil {
+		return launchpadQuoteOutcome{}, err
+	}
+	bcAcct := snap.Accounts[bcPK]
+	globalAcct := snap.Accounts[globalPK]
+	if bcAcct == nil || globalAcct == nil {
+		return launchpadQuoteOutcome{}, fmt.Errorf("snapshot missing pump quote accounts for swap output")
+	}
+	curveB, err := pumpfun.DecodeBondingCurve(bcAcct.Data.GetBinary())
+	if err != nil {
+		return launchpadQuoteOutcome{}, err
+	}
+	globalB, err := pumpfun.DecodeGlobal(globalAcct.Data.GetBinary())
+	if err != nil {
+		return launchpadQuoteOutcome{}, err
+	}
+	if pumpfun.QuoteKindFor(s.cfg, curveB) != pumpfun.QuoteNativeSOL {
+		return launchpadQuoteOutcome{
+			OutputAmount:      outcome.OutputAmount,
+			MinOutputAmount:   outcome.MinOutputAmount,
+			GrossOutputAmount: outcome.GrossOutputAmount,
+			ServiceFeeAmount:  outcome.ServiceFeeAmount,
+			ServiceFeeBasis:   "min_gross_quote",
+		}, nil
+	}
+
+	amounts, err := s.pumpBuyAmountsAfterRepay(
+		in, legs, globalB, curveB, grossBuyIn, in.SlippageBPS,
+		estimatePumpSwapSponsoredATACreates(),
+	)
+	if err != nil {
+		return launchpadQuoteOutcome{}, err
+	}
+	if amounts.RepayDeducted == 0 {
+		return launchpadQuoteOutcome{
+			OutputAmount:      outcome.OutputAmount,
+			MinOutputAmount:   outcome.MinOutputAmount,
+			GrossOutputAmount: outcome.GrossOutputAmount,
+			ServiceFeeAmount:  outcome.ServiceFeeAmount,
+			ServiceFeeBasis:   "min_gross_quote",
+		}, nil
+	}
+
+	outExpected := pumpfun.BuyBaseOut(globalB, curveB, amounts.SponsoredPumpIn)
 	return launchpadQuoteOutcome{
-		OutputAmount:      outcome.OutputAmount,
-		MinOutputAmount:   outcome.MinOutputAmount,
+		OutputAmount:      outExpected,
+		MinOutputAmount:   amounts.MinBaseOutSponsor,
 		GrossOutputAmount: outcome.GrossOutputAmount,
 		ServiceFeeAmount:  outcome.ServiceFeeAmount,
 		ServiceFeeBasis:   "min_gross_quote",

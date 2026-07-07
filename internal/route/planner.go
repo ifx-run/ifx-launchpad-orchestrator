@@ -83,7 +83,6 @@ func HasBridgeLeg(p PlannedRoute) bool {
 }
 
 // RouteInvolvesSOL reports whether any leg touches WSOL / native SOL routing.
-// Prefer SponsoredSwapEligible for gasless/sponsored eligibility (user pay/receive assets).
 func RouteInvolvesSOL(legs []Leg, wsolMint string) bool {
 	for _, leg := range legs {
 		if leg.InputMint == wsolMint || leg.OutputMint == wsolMint {
@@ -93,37 +92,39 @@ func RouteInvolvesSOL(legs []Leg, wsolMint string) bool {
 	return false
 }
 
-// SponsoredSwapEligible is true when the user's chosen pay or receive asset is native SOL
-// or WSOL. Transient WSOL inside a bridge→launchpad hop (e.g. USDT→WSOL→token) does not qualify.
-func SponsoredSwapEligible(inputMint, outputMint, inputSettlement, outputSettlement, wsolMint string) bool {
+// RouteInputIsNativeSOL reports whether the user pays the route with native SOL lamports.
+// WSOL SPL input (wsol_spl) is allowed — repay can come from unwrap output or swap proceeds.
+func RouteInputIsNativeSOL(inputSettlement string) bool {
+	return inputSettlement == "native_sol"
+}
+
+// RouteHasSOLStream reports whether mints, settlements, or legs touch SOL/WSOL.
+func RouteHasSOLStream(inputMint, outputMint, outputSettlement, wsolMint string, legs []Leg) bool {
 	if inputMint == wsolMint || outputMint == wsolMint {
-		return true
-	}
-	if inputSettlement == "native_sol" || inputSettlement == "wsol_spl" {
 		return true
 	}
 	if outputSettlement == "native_sol" || outputSettlement == "wsol_spl" {
 		return true
 	}
-	return false
+	return RouteInvolvesSOL(legs, wsolMint)
 }
 
-// SponsoredRepayEligible is true when repay can be taken from a SOL/WSOL stream:
-// user pays/receives SOL/WSOL, or the route legs involve WSOL (bridge→launchpad hop).
+// SponsoredRepayEligible is true when sponsor can be repaid from a SOL/WSOL stream on the route.
+// Excluded: (1) native SOL pays the route; (2) no SOL/WSOL on input, output, or legs.
 func SponsoredRepayEligible(inputMint, outputMint, inputSettlement, outputSettlement, wsolMint string, legs []Leg) bool {
 	if len(legs) == 1 && legs[0].Kind == LegQuoteBridge {
 		return QuoteSwapSponsoredEligible(inputMint, outputMint, inputSettlement, outputSettlement, wsolMint)
 	}
-	if SponsoredSwapEligible(inputMint, outputMint, inputSettlement, outputSettlement, wsolMint) {
-		return true
+	if RouteInputIsNativeSOL(inputSettlement) {
+		return false
 	}
-	return RouteInvolvesSOL(legs, wsolMint)
+	return RouteHasSOLStream(inputMint, outputMint, outputSettlement, wsolMint, legs)
 }
 
 // QuoteSwapSponsoredEligible is true when repay can come from WSOL swap output (unwrap to SOL for repay).
-// Paying with native SOL (or WSOL as input mint) does not qualify — user already holds gas funds.
+// Paying with native SOL does not qualify — user already holds gas funds.
 func QuoteSwapSponsoredEligible(inputMint, outputMint, inputSettlement, outputSettlement, wsolMint string) bool {
-	if inputSettlement == "native_sol" || inputMint == wsolMint {
+	if inputSettlement == "native_sol" {
 		return false
 	}
 	if outputMint != wsolMint {

@@ -56,13 +56,28 @@ func TestSponsoredRepayEligible_userAssets(t *testing.T) {
 		{Kind: LegLaunchpad, InputMint: wsol, OutputMint: token},
 	}
 
-	if !SponsoredRepayEligible(wsol, token, "native_sol", "spl", wsol, nil) {
-		t.Fatal("SOL buy should be sponsored-repay eligible")
+	if SponsoredRepayEligible(wsol, token, "native_sol", "spl", wsol, nil) {
+		t.Fatal("SOL buy should not be sponsored-repay eligible")
+	}
+	if SponsoredRepayEligible(wsol, token, "native_sol", "spl", wsol, []Leg{
+		{Kind: LegLaunchpad, InputMint: wsol, OutputMint: token},
+	}) {
+		t.Fatal("SOL 1-hop launchpad buy should not be sponsored-repay eligible")
 	}
 	if SponsoredRepayEligible(wsol, token, "native_sol", "spl", wsol, []Leg{
 		{Kind: LegQuoteBridge, InputMint: wsol, OutputMint: usdc},
 	}) {
 		t.Fatal("SOL pay quote swap should not be sponsored-repay eligible")
+	}
+	if !SponsoredRepayEligible(wsol, wsol, "wsol_spl", "native_sol", wsol, []Leg{
+		{Kind: LegSOLSettlement, InputMint: wsol, OutputMint: wsol},
+	}) {
+		t.Fatal("WSOL unwrap to native SOL should be sponsored-repay eligible")
+	}
+	if SponsoredRepayEligible(usdc, usdt, "spl", "spl", wsol, []Leg{
+		{Kind: LegQuoteBridge, InputMint: usdc, OutputMint: usdt},
+	}) {
+		t.Fatal("USDC→USDT with no SOL stream should not be sponsored-repay eligible")
 	}
 	if !SponsoredRepayEligible(usdc, wsol, "spl", "native_sol", wsol, []Leg{
 		{Kind: LegQuoteBridge, InputMint: usdc, OutputMint: wsol},
@@ -80,7 +95,11 @@ func TestSponsoredRepayEligible_userAssets(t *testing.T) {
 	if !SponsoredRepayEligible(usdt, token, "spl", "spl", wsol, legs) {
 		t.Fatal("USDT bridge buy should be sponsored-repay eligible")
 	}
-	if SponsoredSwapEligible(usdt, token, "spl", "spl", wsol) {
-		t.Fatal("user assets alone should not qualify")
+	swapLegs := []Leg{
+		{Kind: LegLaunchpad, InputMint: token, OutputMint: wsol},
+		{Kind: LegLaunchpad, InputMint: wsol, OutputMint: "TokenMintB222"},
+	}
+	if !SponsoredRepayEligible(token, "TokenMintB222", "spl", "spl", wsol, swapLegs) {
+		t.Fatal("swap A→B should be sponsored-repay eligible")
 	}
 }

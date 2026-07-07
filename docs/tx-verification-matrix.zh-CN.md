@@ -76,24 +76,22 @@ Pump.fun bonding curve（v1）。演示环境多为 **SOL 池**。
 
 | # | 场景 | 支付 | 收到 | 路由 | 变体 | 预期 | 状态 | Signature | Solscan | 备注 |
 |---|------|------|------|------|------|------|------|-----------|---------|------|
-| C1 | SOL 买单跳 | 原生 SOL `native_sol` | `<pump-mint>` | `SOL -> X` | `selfFunded` | Pump buy + 平台费 + CU | — | | | SOL 池代币 |
-| C2 | SOL 买 + MEV | 原生 SOL `native_sol` | `<pump-mint>` | `SOL -> X` | `selfFundedMev` | + Jito tip | — | | | |
-| C4 | USDC 买 SOL 池币 | USDC `spl` | `<pump-mint>` | `USDC -> SOL -> X` | `selfFunded` | bridge + Ifx patch → Pump buy | — | | | |
-| C5 | USDC 买 + sponsored | USDC `spl` | `<pump-mint>` | `USDC -> SOL -> X` | `sponsoredSwap` | 从 bridge 产出 SOL/WSOL 偿还 | — | | | |
-| C6 | USDT 买 SOL 池币 | USDT `spl` | `<pump-mint>` | `USDT -> SOL -> X` | `selfFunded` | 同 C4 | — | | | |
+| C1 | SOL 买单跳 | 原生 SOL `native_sol` | `<pump-mint>` | `SOL -> X` | `selfFunded` | Pump buy + 平台费 + CU | ok | `2moymuNZwSCuqfZWVFhU2b3Jd7CAwuYgcpiDeaCDqmVDpVcyoTZoEJemmpKrCoZmdXKaMaB34tmvRWW7qJzZ7bVK` | [Solscan](https://solscan.io/tx/2moymuNZwSCuqfZWVFhU2b3Jd7CAwuYgcpiDeaCDqmVDpVcyoTZoEJemmpKrCoZmdXKaMaB34tmvRWW7qJzZ7bVK) | SOL 池代币 |
+| C2 | SOL 买 + MEV | 原生 SOL `native_sol` | `<pump-mint>` | `SOL -> X` | `selfFundedMev` | + Jito tip | ok | `3UHjxe5LNQf7Ew2ZobVCpVA2foJeRqeFDE1SeTRvWtRrJBeVQctpEo6Y82XnFtNYDvkoYmpFueungddSv9BEi8h9` | [Solscan](https://solscan.io/tx/3UHjxe5LNQf7Ew2ZobVCpVA2foJeRqeFDE1SeTRvWtRrJBeVQctpEo6Y82XnFtNYDvkoYmpFueungddSv9BEi8h9) | |
+| C4 | USDC 买 SOL 池币 | USDC `spl` | `<pump-mint>` | `USDC -> SOL -> X` | `selfFunded` | bridge + Ifx patch → Pump buy | ok | `55pyoWvh45PCWWNt6YtjDoNxrdJanS8pdhWFA62PhGcuhBc5iz9B4agq57JKuGVaNdwm6SkjPW6us9JHyFyZk4V5` | [Solscan](https://solscan.io/tx/55pyoWvh45PCWWNt6YtjDoNxrdJanS8pdhWFA62PhGcuhBc5iz9B4agq57JKuGVaNdwm6SkjPW6us9JHyFyZk4V5) | USDT 输入同此路径 |
+| C5 | USDC 买 + sponsored | USDC `spl` | `<pump-mint>` | `USDC -> SOL -> X` | `sponsoredSwap` | 从 bridge 产出 SOL/WSOL 偿还 | ok | `2kffhdsCv5sZUBtqpj58nWtYcnnwcNYFuXwx3JbB1AeqQeSaa47gAPQ6UBU8Xf1ixTCy8LVEG7rNt6AEukhrUb6S` | [Solscan](https://solscan.io/tx/2kffhdsCv5sZUBtqpj58nWtYcnnwcNYFuXwx3JbB1AeqQeSaa47gAPQ6UBU8Xf1ixTCy8LVEG7rNt6AEukhrUb6S) | |
 
 ---
 
 ## D — 内盘卖出
 
+SOL 池代币卖出换稳定币（`X -> SOL -> USDT`）。USDC 等同路径，不再单独列行。
+
 | # | 场景 | 支付 | 收到 | 路由 | 变体 | 预期 | 状态 | Signature | Solscan | 备注 |
 |---|------|------|------|------|------|------|------|-----------|---------|------|
-| D1 | 卖出换原生 SOL | `<pump-mint>` | 原生 SOL `native_sol` | `X -> SOL` | `selfFunded` | Pump sell + SOL 平台费 + CU | — | | | SOL 池 |
-| D2 | 卖出 + MEV | `<pump-mint>` | 原生 SOL `native_sol` | `X -> SOL` | `selfFundedMev` | + Jito tip | — | | | |
-| D3 | 卖出 + sponsored | `<pump-mint>` | 原生 SOL `native_sol` | `X -> SOL` | `sponsoredSwap` | sponsor 代付；SOL 产出偿还 | — | | | |
-| D4 | 卖出换 USDC | `<pump-mint>` | USDC `spl` | `X -> SOL -> USDC` | `selfFunded` | sell + bridge | — | | | |
-| D5 | 卖出换 USDC + sponsored | `<pump-mint>` | USDC `spl` | `X -> SOL -> USDC` | `sponsoredSwap` | 从 sell 后 SOL 流偿还 | — | | | |
-| D6 | 卖出保留 WSOL | `<pump-mint>` | WSOL `wsol_spl` | `X -> WSOL` | `selfFunded` | 产出留 WSOL ATA | — | | | |
+| D1 | 卖出换 USDT | `<pump-mint>` | USDT `spl` | `X -> SOL -> USDT` | `selfFunded` | sell + bridge | ok | `4y4QxRNCi1W47b8Cz9S3Zk5ju5EcsCUiBH2FQE2PDng1S6W4mxrUCPY7TLwVxSYcR1ahWtBVDnEk1ozZRnbcepJV` | [Solscan](https://solscan.io/tx/4y4QxRNCi1W47b8Cz9S3Zk5ju5EcsCUiBH2FQE2PDng1S6W4mxrUCPY7TLwVxSYcR1ahWtBVDnEk1ozZRnbcepJV) | SOL 池 |
+| D2 | 卖出换 USDT + MEV | `<pump-mint>` | USDT `spl` | `X -> SOL -> USDT` | `selfFundedMev` | + Jito tip | ok | `CQ84VMaN4m9uko7PfKE9pstkKi3b99Fz3AT5tt35RbEGKunpberh11Qn4waGy6mvfyBjyMBG14nAnxL8sm7sqxT` | [Solscan](https://solscan.io/tx/CQ84VMaN4m9uko7PfKE9pstkKi3b99Fz3AT5tt35RbEGKunpberh11Qn4waGy6mvfyBjyMBG14nAnxL8sm7sqxT) | |
+| D3 | 卖出换 USDT + sponsored + MEV | `<pump-mint>` | USDT `spl` | `X -> SOL -> USDT` | `sponsoredSwapMev` | sponsor 代付 + Jito tip；SOL 产出偿还 | ok | `w44veLgotXZiyKFNNZpvHkb1U1dnwAgyoaQfad9JRr3muL46Wwpz8aeG5YXCCjZtq35AQPcZhGYURtGBk7EeaFS` | [Solscan](https://solscan.io/tx/w44veLgotXZiyKFNNZpvHkb1U1dnwAgyoaQfad9JRr3muL46Wwpz8aeG5YXCCjZtq35AQPcZhGYURtGBk7EeaFS) | 需 `[sponsor]` + `[jito]` |
 
 ---
 
@@ -103,9 +101,9 @@ Pump.fun bonding curve（v1）。演示环境多为 **SOL 池**。
 
 | # | 场景 | 支付 | 收到 | 路由 | 变体 | 预期 | 状态 | Signature | Solscan | 备注 |
 |---|------|------|------|------|------|------|------|-----------|---------|------|
-| E1 | A → B | `<mint-A>` | `<mint-B>` | `A -> SOL -> B` | `selfFunded` | sell A + buy B + 跳间费 + CU | — | | | 均为 SOL 池 |
-| E2 | A → B + MEV | `<mint-A>` | `<mint-B>` | `A -> SOL -> B` | `selfFundedMev` | + Jito tip | — | | | |
-| E3 | A → B + sponsored | `<mint-A>` | `<mint-B>` | `A -> SOL -> B` | `sponsoredSwap` | sell A 产出 SOL 偿还 | — | | | 均为 SOL 池 |
+| E1 | A → B | `<mint-A>` | `<mint-B>` | `A -> SOL -> B` | `selfFunded` | sell A + buy B + 跳间费 + CU | ok | `2aG87vD7LdYbU1g9tJ47tmW1h84Rj1btsDkqcZ6VxZeoLUCzX11biNSUtJFg9sJnVZQoxEXEAs3cQ6d39vqr354b` | [Solscan](https://solscan.io/tx/2aG87vD7LdYbU1g9tJ47tmW1h84Rj1btsDkqcZ6VxZeoLUCzX11biNSUtJFg9sJnVZQoxEXEAs3cQ6d39vqr354b) | 均为 SOL 池 |
+| E2 | A → B + MEV | `<mint-A>` | `<mint-B>` | `A -> SOL -> B` | `selfFundedMev` | + Jito tip | ok | `2AKoV3GpBgeW2FNhMbo8SVGejVL9LjFraEJm1ZEqaRLmboBPeGtunV5TWKtAqvZ1R4gc1Etd1SZWT6vvAZGXHJBc` | [Solscan](https://solscan.io/tx/2AKoV3GpBgeW2FNhMbo8SVGejVL9LjFraEJm1ZEqaRLmboBPeGtunV5TWKtAqvZ1R4gc1Etd1SZWT6vvAZGXHJBc) | |
+| E3 | A → B + sponsored | `<mint-A>` | `<mint-B>` | `A -> SOL -> B` | `sponsoredSwap` | sell A 产出 SOL 偿还 | ok | `26rrvEKgK8KJ4thhY5EPeSFtR1WcXz8yhaaTTptw9HAaYCjt5NBSLpYmaW9xFtjFtmZzMxTen27Q8h4ykAs2A2Zn` | [Solscan](https://solscan.io/tx/26rrvEKgK8KJ4thhY5EPeSFtR1WcXz8yhaaTTptw9HAaYCjt5NBSLpYmaW9xFtjFtmZzMxTen27Q8h4ykAs2A2Zn) | 均为 SOL 池 |
 
 ---
 
@@ -113,9 +111,9 @@ Pump.fun bonding curve（v1）。演示环境多为 **SOL 池**。
 
 1. **A1 → A7** — 互转
 2. **C1 → C2** — SOL 买单跳
-3. **D1 → D3** — 卖出三变体
+3. **D1 → D3** — 卖出换 USDT（三变体）
 4. **B1、B3、B4、B6、B7** — quote 互换（含 WSOL 收到侧 sponsored）
-5. **C4、D4** — 非原生 quote 两跳
+5. **C4、C5** — 非原生 quote 两跳买入
 6. **E1 → E3** — A→B
 7. **A3–A6** — 全额解包双模式
 
@@ -128,8 +126,6 @@ Pump.fun bonding curve（v1）。演示环境多为 **SOL 池**。
 | WSOL | `So11111111111111111111111111111111111111112` | |
 | USDC | `EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v` | |
 | USDT | `Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB` | |
-| Pump 代币 A | SOL 池、未毕业 | |
-| Pump 代币 B | SOL 池、未毕业 | |
 
 ---
 

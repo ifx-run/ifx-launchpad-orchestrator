@@ -76,24 +76,22 @@ Pump.fun bonding curve (v1). Pool quote = **native SOL** unless token is USDC-po
 
 | # | Scenario | Pay | Receive | Route | Variant | Expect | Status | Signature | Solscan | Notes |
 |---|----------|-----|---------|-------|---------|--------|--------|-----------|---------|-------|
-| C1 | SOL buy (1-hop) | Native SOL `native_sol` | `<pump-mint>` | `SOL -> X` | `selfFunded` | Pump buy + platform fee + CU | — | | | SOL-pool token |
-| C2 | SOL buy + MEV | Native SOL `native_sol` | `<pump-mint>` | `SOL -> X` | `selfFundedMev` | + Jito tip | — | | | |
-| C4 | USDC buy SOL-pool token | USDC `spl` | `<pump-mint>` | `USDC -> SOL -> X` | `selfFunded` | bridge + Ifx patch → Pump buy | — | | | |
-| C5 | USDC buy + sponsored | USDC `spl` | `<pump-mint>` | `USDC -> SOL -> X` | `sponsoredSwap` | repay from bridge SOL/WSOL output | — | | | |
-| C6 | USDT buy SOL-pool token | USDT `spl` | `<pump-mint>` | `USDT -> SOL -> X` | `selfFunded` | same pattern as C4 | — | | | |
+| C1 | SOL buy (1-hop) | Native SOL `native_sol` | `<pump-mint>` | `SOL -> X` | `selfFunded` | Pump buy + platform fee + CU | ok | `2moymuNZwSCuqfZWVFhU2b3Jd7CAwuYgcpiDeaCDqmVDpVcyoTZoEJemmpKrCoZmdXKaMaB34tmvRWW7qJzZ7bVK` | [Solscan](https://solscan.io/tx/2moymuNZwSCuqfZWVFhU2b3Jd7CAwuYgcpiDeaCDqmVDpVcyoTZoEJemmpKrCoZmdXKaMaB34tmvRWW7qJzZ7bVK) | SOL-pool token |
+| C2 | SOL buy + MEV | Native SOL `native_sol` | `<pump-mint>` | `SOL -> X` | `selfFundedMev` | + Jito tip | ok | `3UHjxe5LNQf7Ew2ZobVCpVA2foJeRqeFDE1SeTRvWtRrJBeVQctpEo6Y82XnFtNYDvkoYmpFueungddSv9BEi8h9` | [Solscan](https://solscan.io/tx/3UHjxe5LNQf7Ew2ZobVCpVA2foJeRqeFDE1SeTRvWtRrJBeVQctpEo6Y82XnFtNYDvkoYmpFueungddSv9BEi8h9) | |
+| C4 | USDC buy SOL-pool token | USDC `spl` | `<pump-mint>` | `USDC -> SOL -> X` | `selfFunded` | bridge + Ifx patch → Pump buy | ok | `55pyoWvh45PCWWNt6YtjDoNxrdJanS8pdhWFA62PhGcuhBc5iz9B4agq57JKuGVaNdwm6SkjPW6us9JHyFyZk4V5` | [Solscan](https://solscan.io/tx/55pyoWvh45PCWWNt6YtjDoNxrdJanS8pdhWFA62PhGcuhBc5iz9B4agq57JKuGVaNdwm6SkjPW6us9JHyFyZk4V5) | USDT input same path |
+| C5 | USDC buy + sponsored | USDC `spl` | `<pump-mint>` | `USDC -> SOL -> X` | `sponsoredSwap` | repay from bridge SOL/WSOL output | ok | `2kffhdsCv5sZUBtqpj58nWtYcnnwcNYFuXwx3JbB1AeqQeSaa47gAPQ6UBU8Xf1ixTCy8LVEG7rNt6AEukhrUb6S` | [Solscan](https://solscan.io/tx/2kffhdsCv5sZUBtqpj58nWtYcnnwcNYFuXwx3JbB1AeqQeSaa47gAPQ6UBU8Xf1ixTCy8LVEG7rNt6AEukhrUb6S) | |
 
 ---
 
 ## D — Launchpad sell
 
+SOL-pool token sell for stablecoin (`X -> SOL -> USDT`). USDC uses the same path — no separate rows.
+
 | # | Scenario | Pay | Receive | Route | Variant | Expect | Status | Signature | Solscan | Notes |
 |---|----------|-----|---------|-------|---------|--------|--------|-----------|---------|-------|
-| D1 | Sell → Native SOL | `<pump-mint>` | Native SOL `native_sol` | `X -> SOL` | `selfFunded` | Pump sell + SOL platform fee (Ifx/SystemTransfer) + CU | — | | | SOL-pool token |
-| D2 | Sell → Native SOL + MEV | `<pump-mint>` | Native SOL `native_sol` | `X -> SOL` | `selfFundedMev` | + Jito tip | — | | | |
-| D3 | Sell → Native SOL + sponsored | `<pump-mint>` | Native SOL `native_sol` | `X -> SOL` | `sponsoredSwap` | sponsor fee payer; repay from SOL proceeds | — | | | |
-| D4 | Sell → USDC | `<pump-mint>` | USDC `spl` | `X -> SOL -> USDC` | `selfFunded` | sell + bridge | — | | | pick token with SOL pool |
-| D5 | Sell → USDC + sponsored | `<pump-mint>` | USDC `spl` | `X -> SOL -> USDC` | `sponsoredSwap` | repay from SOL stream after sell | — | | | |
-| D6 | Sell → WSOL SPL | `<pump-mint>` | WSOL `wsol_spl` | `X -> WSOL` | `selfFunded` | output stays WSOL ATA (no close) | — | | | |
+| D1 | Sell → USDT | `<pump-mint>` | USDT `spl` | `X -> SOL -> USDT` | `selfFunded` | sell + bridge | ok | `4y4QxRNCi1W47b8Cz9S3Zk5ju5EcsCUiBH2FQE2PDng1S6W4mxrUCPY7TLwVxSYcR1ahWtBVDnEk1ozZRnbcepJV` | [Solscan](https://solscan.io/tx/4y4QxRNCi1W47b8Cz9S3Zk5ju5EcsCUiBH2FQE2PDng1S6W4mxrUCPY7TLwVxSYcR1ahWtBVDnEk1ozZRnbcepJV) | SOL-pool token |
+| D2 | Sell → USDT + MEV | `<pump-mint>` | USDT `spl` | `X -> SOL -> USDT` | `selfFundedMev` | + Jito tip | ok | `CQ84VMaN4m9uko7PfKE9pstkKi3b99Fz3AT5tt35RbEGKunpberh11Qn4waGy6mvfyBjyMBG14nAnxL8sm7sqxT` | [Solscan](https://solscan.io/tx/CQ84VMaN4m9uko7PfKE9pstkKi3b99Fz3AT5tt35RbEGKunpberh11Qn4waGy6mvfyBjyMBG14nAnxL8sm7sqxT) | |
+| D3 | Sell → USDT + sponsored + MEV | `<pump-mint>` | USDT `spl` | `X -> SOL -> USDT` | `sponsoredSwapMev` | sponsor fee payer + Jito tip; repay from SOL proceeds | ok | `w44veLgotXZiyKFNNZpvHkb1U1dnwAgyoaQfad9JRr3muL46Wwpz8aeG5YXCCjZtq35AQPcZhGYURtGBk7EeaFS` | [Solscan](https://solscan.io/tx/w44veLgotXZiyKFNNZpvHkb1U1dnwAgyoaQfad9JRr3muL46Wwpz8aeG5YXCCjZtq35AQPcZhGYURtGBk7EeaFS) | needs `[sponsor]` + `[jito]` |
 
 ---
 
@@ -103,9 +101,9 @@ Same `Q_native` on both tokens (v1: two Pump legs via SOL).
 
 | # | Scenario | Pay | Receive | Route | Variant | Expect | Status | Signature | Solscan | Notes |
 |---|----------|-----|---------|-------|---------|--------|--------|-----------|---------|-------|
-| E1 | A → B (same quote) | `<mint-A>` | `<mint-B>` | `A -> SOL -> B` | `selfFunded` | sell A + buy B + inter-hop fee + CU | — | | | both SOL-pool |
-| E2 | A → B + MEV | `<mint-A>` | `<mint-B>` | `A -> SOL -> B` | `selfFundedMev` | + Jito tip | — | | | |
-| E3 | A → B + sponsored | `<mint-A>` | `<mint-B>` | `A -> SOL -> B` | `sponsoredSwap` | repay from SOL after sell A | — | | | both SOL-pool |
+| E1 | A → B (same quote) | `<mint-A>` | `<mint-B>` | `A -> SOL -> B` | `selfFunded` | sell A + buy B + inter-hop fee + CU | ok | `2aG87vD7LdYbU1g9tJ47tmW1h84Rj1btsDkqcZ6VxZeoLUCzX11biNSUtJFg9sJnVZQoxEXEAs3cQ6d39vqr354b` | [Solscan](https://solscan.io/tx/2aG87vD7LdYbU1g9tJ47tmW1h84Rj1btsDkqcZ6VxZeoLUCzX11biNSUtJFg9sJnVZQoxEXEAs3cQ6d39vqr354b) | both SOL-pool |
+| E2 | A → B + MEV | `<mint-A>` | `<mint-B>` | `A -> SOL -> B` | `selfFundedMev` | + Jito tip | ok | `2AKoV3GpBgeW2FNhMbo8SVGejVL9LjFraEJm1ZEqaRLmboBPeGtunV5TWKtAqvZ1R4gc1Etd1SZWT6vvAZGXHJBc` | [Solscan](https://solscan.io/tx/2AKoV3GpBgeW2FNhMbo8SVGejVL9LjFraEJm1ZEqaRLmboBPeGtunV5TWKtAqvZ1R4gc1Etd1SZWT6vvAZGXHJBc) | |
+| E3 | A → B + sponsored | `<mint-A>` | `<mint-B>` | `A -> SOL -> B` | `sponsoredSwap` | repay from SOL after sell A | ok | `26rrvEKgK8KJ4thhY5EPeSFtR1WcXz8yhaaTTptw9HAaYCjt5NBSLpYmaW9xFtjFtmZzMxTen27Q8h4ykAs2A2Zn` | [Solscan](https://solscan.io/tx/26rrvEKgK8KJ4thhY5EPeSFtR1WcXz8yhaaTTptw9HAaYCjt5NBSLpYmaW9xFtjFtmZzMxTen27Q8h4ykAs2A2Zn) | both SOL-pool |
 
 ---
 
@@ -113,9 +111,9 @@ Same `Q_native` on both tokens (v1: two Pump legs via SOL).
 
 1. **A1 → A7** — settlement
 2. **C1 → C2** — native SOL 1-hop buy
-3. **D1 → D3** — core sell variants
+3. **D1 → D3** — sell for USDT (three variants)
 4. **B1, B3, B4, B6, B7** — quote swap (incl. WSOL receive-side sponsored)
-5. **C4, D4** — non-native quote 2-hop
+5. **C4, C5** — non-native quote 2-hop buy
 6. **E1 → E3** — A→B swap
 7. **A3–A6** — full-balance unwrap modes
 
@@ -128,8 +126,6 @@ Same `Q_native` on both tokens (v1: two Pump legs via SOL).
 | WSOL | `So11111111111111111111111111111111111111112` | |
 | USDC | `EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v` | |
 | USDT | `Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB` | |
-| Pump token A | SOL-pool, ungraduated | |
-| Pump token B | SOL-pool, ungraduated | |
 
 ---
 

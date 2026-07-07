@@ -141,7 +141,9 @@ func (s *Service) sellBridgeAmountsAfterRepay(
 	return amt, nil
 }
 
-// estimatePumpBuyTwoLegATACreates matches typical ATA creates before the Ifx chain.
+// estimatePumpSwapSponsoredATACreates matches sponsor ATA create for output base mint on A→B swap.
+func estimatePumpSwapSponsoredATACreates() int { return 1 }
+
 func estimatePumpBuyTwoLegATACreates(wrapBridgeSOL bool) int {
 	n := 3 // base + pay mint + WSOL measure ATA
 	if wrapBridgeSOL {

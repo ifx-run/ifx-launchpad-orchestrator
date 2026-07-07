@@ -60,10 +60,6 @@ func (s *Service) buildPumpSwapTwoLeg(
 	if err != nil {
 		return nil, err
 	}
-	baseDecB, err := pumpfun.MintDecimals(mintAcctB.Data.GetBinary())
-	if err != nil {
-		return nil, err
-	}
 	inputRaw, err := util.ResolveInputAmount(in.InputAmount, in.InputAmountRaw, baseDecA)
 	if err != nil {
 		return nil, err
@@ -78,6 +74,15 @@ func (s *Service) buildPumpSwapTwoLeg(
 	}
 	outB := pumpfun.BuyBaseOut(globalB, curveB, netQuote)
 	minBaseB := util.MinOut(outB, in.SlippageBPS)
+
+	buyAmounts, err := s.pumpBuyAmountsAfterRepay(
+		in, planned.Legs, globalB, curveB, netQuote, in.SlippageBPS,
+		estimatePumpSwapSponsoredATACreates(),
+	)
+	if err != nil {
+		return nil, err
+	}
+	minBaseBSponsor := buyAmounts.MinBaseOutSponsor
 
 	opFeeATA, err := operatorQuoteATA(feePubkey, quoteMint, quoteTP)
 	if err != nil {
@@ -128,12 +133,19 @@ func (s *Service) buildPumpSwapTwoLeg(
 		return nil, err
 	}
 
+	buyParamsSponsored := buyParams
+	buyParamsSponsored.MinBaseOut = minBaseBSponsor
+	buyTemplateSponsored, err := pumpfun.BuildBuyCoreIx(buyParamsSponsored, quoteKindB)
+	if err != nil {
+		return nil, err
+	}
+
 	ata := newATASetup()
 	if err := ensurePumpBuyATAs(ata, user, mintB, mintAcctB.Owner, quoteMint, quoteTP, quoteKindB); err != nil {
 		return nil, err
 	}
 
-	ifxIxs, err := ifxpkg.PlanPumpSellThenBuy(s.cfg, ifxpkg.SellThenBuyParams{
+	sellThenBuyParams := ifxpkg.SellThenBuyParams{
 		QuoteKind:           quoteKind,
 		SellTemplate:        sellTemplate,
 		BuyTemplate:         buyTemplate,
@@ -145,19 +157,41 @@ func (s *Service) buildPumpSwapTwoLeg(
 		QuoteMint:           quoteMint,
 		QuoteTokenProgram:   quoteTP,
 		QuoteDecimals:       quoteDecimals(s.cfg, quoteMint.String()),
-	})
-	if err != nil {
-		return nil, err
 	}
+	sellThenBuyParamsSponsored := sellThenBuyParams
+	sellThenBuyParamsSponsored.BuyTemplate = buyTemplateSponsored
+	sponsoredWired := quoteKind == pumpfun.QuoteNativeSOL
 
-	var ixs []solana.Instruction
-	if err := ata.appendTo(&ixs, user); err != nil {
-		return nil, err
-	}
-	ixs = append(ixs, ifxIxs...)
-
-	_ = baseDecB
-	return s.compileVariantsFromIXs(ctx, in, user, tier, ixs, serviceFee, planned.Legs, false, ata.count())
+	return s.compilePreflightVariants(ctx, in, user, tier, serviceFee, planned.Legs, ata.count(),
+		func(mode VariantMode) ([]solana.Instruction, error) {
+			if mode.Sponsored {
+				return nil, nil
+			}
+			var pre []solana.Instruction
+			if err := ata.appendTo(&pre, user); err != nil {
+				return nil, err
+			}
+			return pre, nil
+		},
+		func(mode VariantMode) ([]solana.Instruction, error) {
+			if mode.Sponsored && sponsoredWired {
+				repay, err := s.sponsoredRepayParams(user)
+				if err != nil {
+					return nil, err
+				}
+				sponsor, err := s.sponsorPubkey()
+				if err != nil {
+					return nil, err
+				}
+				fixed := s.fixedSponsoredRepayFeesOnly(tier, mode)
+				return ifxpkg.PlanPumpSellThenBuySponsored(
+					s.cfg, sellThenBuyParamsSponsored, repay, fixed, sponsor, ata.ifxSpecs(),
+				)
+			}
+			return ifxpkg.PlanPumpSellThenBuy(s.cfg, sellThenBuyParams)
+		},
+		sponsoredWired,
+	)
 }
 
 func (s *Service) loadPumpCurveState(

@@ -52,6 +52,34 @@ func TestPlanPumpSellThenBuySPL_includesIfxChain(t *testing.T) {
 	assertIfxCpi(t, cfg, ixs[len(ixs)-1])
 }
 
+func TestPlanPumpSellThenBuySponsored_includesRepayChain(t *testing.T) {
+	cfg := testCfg()
+	user := solana.MustPublicKeyFromBase58("BKNnVDyzcPGCWnk8zX3Cn2KKhLASk5iTjVpxUW7YTb8P")
+	sellTpl := solana.NewInstruction(pumpfun.ProgramID(), solana.AccountMetaSlice{
+		{PublicKey: user, IsSigner: true, IsWritable: true},
+	}, make([]byte, 24))
+	buyTpl := solana.NewInstruction(pumpfun.ProgramID(), solana.AccountMetaSlice{
+		{PublicKey: user, IsSigner: true, IsWritable: true},
+	}, make([]byte, 24))
+
+	ixs, err := ifxpkg.PlanPumpSellThenBuySponsored(cfg, ifxpkg.SellThenBuyParams{
+		QuoteKind:         pumpfun.QuoteNativeSOL,
+		SellTemplate:      sellTpl,
+		BuyTemplate:       buyTpl,
+		ServiceFeeBPS:     cfg.ServiceFee.BPS,
+		User:              user,
+		PlatformFeePubkey: user,
+	}, ifxpkg.SponsoredRepayParams{User: user, RepayTo: user}, 5000, user, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(ixs) < 6 {
+		t.Fatalf("expected sponsored sell→buy chain, got %d instructions", len(ixs))
+	}
+	assertIfxReset(t, cfg, ixs[0])
+	assertIfxCpi(t, cfg, ixs[len(ixs)-1])
+}
+
 func TestPlanPumpSellThenBridgeSPL_zeroFeeStillUsesIfx(t *testing.T) {
 	cfg := testCfg()
 	cfg.ServiceFee.BPS = 0

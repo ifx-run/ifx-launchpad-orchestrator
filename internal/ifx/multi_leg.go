@@ -244,7 +244,52 @@ type SellThenBuyParams struct {
 
 // PlanPumpSellThenBuy returns reset → let(before) → sell → let(delta) → fee → patched buy.
 func PlanPumpSellThenBuy(cfg *config.Config, p SellThenBuyParams) ([]solana.Instruction, error) {
-	feeParams := SellThenBridgeParams{
+	feeParams := sellThenBuyFeeParams(p)
+	switch p.QuoteKind {
+	case pumpfun.QuoteNativeSOL:
+		return planPumpSellThenBuySOL(cfg, feeParams, p.BuyTemplate)
+	case pumpfun.QuoteSPL:
+		return planPumpSellThenBuySPL(cfg, feeParams, p.BuyTemplate)
+	default:
+		return nil, fmt.Errorf("unsupported quote kind for sell→buy")
+	}
+}
+
+// PlanPumpSellThenBuySponsored repays sponsor from sell SOL proceeds then patched buy(B).
+func PlanPumpSellThenBuySponsored(cfg *config.Config, p SellThenBuyParams, repay SponsoredRepayParams, fixedRepay uint64, sponsorPayer solana.PublicKey, ataSpecs []ATASetupSpec) ([]solana.Instruction, error) {
+	if p.QuoteKind != pumpfun.QuoteNativeSOL {
+		return nil, fmt.Errorf("sponsored sell→buy requires SOL quote pool")
+	}
+	s, err := NewScratch(cfg)
+	if err != nil {
+		return nil, err
+	}
+	out := []solana.Instruction{s.IxReset()}
+
+	out, ataCost, err := AppendSponsorATACreates(s, out, sponsorPayer, ataSpecs)
+	if err != nil {
+		return nil, err
+	}
+
+	out, netLamports, err := planSellDeltaFeePrefixSOLScratchAfterReset(s, out, sellThenBuyFeeParams(p))
+	if err != nil {
+		return nil, err
+	}
+	repay.FixedCostLamports = fixedRepay
+	out, buyIn, err := AppendRepayDeductNet(s, out, repay, netLamports, ataCost, fixedRepay)
+	if err != nil {
+		return nil, err
+	}
+	buyCpi, err := rawCpiIxScratch(s, p.BuyTemplate, patch.RawCpiPatch(pumpfun.BuySpendableQuoteInOffset, buyIn))
+	if err != nil {
+		return nil, err
+	}
+	out = append(out, buyCpi)
+	return out, nil
+}
+
+func sellThenBuyFeeParams(p SellThenBuyParams) SellThenBridgeParams {
+	return SellThenBridgeParams{
 		QuoteKind:           p.QuoteKind,
 		SellTemplate:        p.SellTemplate,
 		ServiceFeeBPS:       p.ServiceFeeBPS,
@@ -255,14 +300,6 @@ func PlanPumpSellThenBuy(cfg *config.Config, p SellThenBuyParams) ([]solana.Inst
 		QuoteMint:           p.QuoteMint,
 		QuoteTokenProgram:   p.QuoteTokenProgram,
 		QuoteDecimals:       p.QuoteDecimals,
-	}
-	switch p.QuoteKind {
-	case pumpfun.QuoteNativeSOL:
-		return planPumpSellThenBuySOL(cfg, feeParams, p.BuyTemplate)
-	case pumpfun.QuoteSPL:
-		return planPumpSellThenBuySPL(cfg, feeParams, p.BuyTemplate)
-	default:
-		return nil, fmt.Errorf("unsupported quote kind for sell→buy")
 	}
 }
 
