@@ -1,7 +1,6 @@
 # Transaction Verification Matrix
 
-Live sign-off sheet for typical Launchpad Orchestrator routes × transaction variants.  
-**Only rows that quote successfully and produce a signable transaction.** Fill in **Signature** and **Solscan** after each on-chain run.
+On-chain verification results for typical Launchpad Orchestrator routes × transaction variants (Solscan sign-off).
 
 **中文：** [tx-verification-matrix.zh-CN.md](tx-verification-matrix.zh-CN.md)
 
@@ -104,33 +103,3 @@ Same `Q_native` on both tokens (v1: two Pump legs via SOL).
 | E1 | A → B (same quote) | `<mint-A>` | `<mint-B>` | `A -> SOL -> B` | `selfFunded` | sell A + buy B + inter-hop fee + CU | ok | `2aG87vD7LdYbU1g9tJ47tmW1h84Rj1btsDkqcZ6VxZeoLUCzX11biNSUtJFg9sJnVZQoxEXEAs3cQ6d39vqr354b` | [Solscan](https://solscan.io/tx/2aG87vD7LdYbU1g9tJ47tmW1h84Rj1btsDkqcZ6VxZeoLUCzX11biNSUtJFg9sJnVZQoxEXEAs3cQ6d39vqr354b) | both SOL-pool |
 | E2 | A → B + MEV | `<mint-A>` | `<mint-B>` | `A -> SOL -> B` | `selfFundedMev` | + Jito tip | ok | `2AKoV3GpBgeW2FNhMbo8SVGejVL9LjFraEJm1ZEqaRLmboBPeGtunV5TWKtAqvZ1R4gc1Etd1SZWT6vvAZGXHJBc` | [Solscan](https://solscan.io/tx/2AKoV3GpBgeW2FNhMbo8SVGejVL9LjFraEJm1ZEqaRLmboBPeGtunV5TWKtAqvZ1R4gc1Etd1SZWT6vvAZGXHJBc) | |
 | E3 | A → B + sponsored | `<mint-A>` | `<mint-B>` | `A -> SOL -> B` | `sponsoredSwap` | repay from SOL after sell A | ok | `26rrvEKgK8KJ4thhY5EPeSFtR1WcXz8yhaaTTptw9HAaYCjt5NBSLpYmaW9xFtjFtmZzMxTen27Q8h4ykAs2A2Zn` | [Solscan](https://solscan.io/tx/26rrvEKgK8KJ4thhY5EPeSFtR1WcXz8yhaaTTptw9HAaYCjt5NBSLpYmaW9xFtjFtmZzMxTen27Q8h4ykAs2A2Zn) | both SOL-pool |
-
----
-
-## Recommended test order
-
-1. **A1 → A7** — settlement
-2. **C1 → C2** — native SOL 1-hop buy
-3. **D1 → D3** — sell for USDT (three variants)
-4. **B1, B3, B4, B6, B7** — quote swap (incl. WSOL receive-side sponsored)
-5. **C4, C5** — non-native quote 2-hop buy
-6. **E1 → E3** — A→B swap
-7. **A3–A6** — full-balance unwrap modes
-
----
-
-## Mint placeholders (fill before testing)
-
-| Symbol | Mainnet mint | Your test value |
-|--------|--------------|-----------------|
-| WSOL | `So11111111111111111111111111111111111111112` | |
-| USDC | `EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v` | |
-| USDT | `Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB` | |
-
----
-
-## Changelog
-
-| Date | Tester | Summary |
-|------|--------|---------|
-| | | |

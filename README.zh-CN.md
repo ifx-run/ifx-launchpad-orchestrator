@@ -2,6 +2,8 @@
 
 Go 服务 + 静态前端：用 [Ifx](https://github.com/ifx-run/ifx) 编排 **Pump.fun**、**Raydium Launchpad**、**Meteora DBC** 内盘未毕业代币交易。一次询价返回报价、路由与 **四种可签名交易变体**（selfFunded / MEV / sponsored / sponsored+MEV）。
 
+**链上验证结果：** [docs/tx-verification-matrix.zh-CN.md](docs/tx-verification-matrix.zh-CN.md)（[English](docs/tx-verification-matrix.md)）
+
 **Quote 桥接（SOL / USDC / USDT）：** Jupiter 仅做**单跳池发现**；swap 指令本地构造。v1 只接账户数少的 flat 池（Raydium AMM v4 / CPMM）。
 
 > 演示软件，非经审计的生产交易所。

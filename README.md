@@ -2,6 +2,8 @@
 
 Go service + static frontend: orchestrate **Pump.fun**, **Raydium Launchpad**, and **Meteora DBC** pre-graduation launchpad trades with [Ifx](https://github.com/ifx-run/ifx). A single quote returns pricing, routing, and **four signable transaction variants** (selfFunded / MEV / sponsored / sponsored+MEV).
 
+**On-chain verification:** [docs/tx-verification-matrix.md](docs/tx-verification-matrix.md) ([中文](docs/tx-verification-matrix.zh-CN.md))
+
 **Quote bridging (SOL / USDC / USDT):** Jupiter is used only for **single-hop pool discovery**; swap instructions are built locally. v1 accepts only low-account flat pools (Raydium AMM v4 / CPMM).
 
 > Demo software — not an audited production exchange.
