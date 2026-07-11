@@ -89,8 +89,8 @@ func (c *Client) DiscoverSingleHop(ctx context.Context, req DiscoverRequest) (*b
 	if c.cfg.Bridge.OnlyDirectRoutes {
 		q.Set("onlyDirectRoutes", "true")
 	}
-	if len(c.cfg.Bridge.LowAccountDexes) > 0 {
-		q.Set("dexes", strings.Join(c.cfg.Bridge.LowAccountDexes, ","))
+	if dexes := DexesForSupportedTypes(c.cfg.Bridge.SupportedTypes); len(dexes) > 0 {
+		q.Set("dexes", strings.Join(dexes, ","))
 	}
 	u.RawQuery = q.Encode()
 

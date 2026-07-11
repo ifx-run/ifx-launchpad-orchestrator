@@ -7,6 +7,8 @@ func (t PoolType) AmountInDataOffset() uint16 {
 		return 1
 	case PoolRaydiumCPMM:
 		return 8
+	case PoolMeteoraDAMMv2:
+		return 8
 	default:
 		return 8
 	}

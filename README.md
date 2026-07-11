@@ -4,7 +4,7 @@ Go service + static frontend: orchestrate **Pump.fun**, **Raydium Launchpad**, a
 
 **On-chain verification:** [docs/tx-verification-matrix.md](docs/tx-verification-matrix.md) ([中文](docs/tx-verification-matrix.zh-CN.md))
 
-**Quote bridging (SOL / USDC / USDT):** Jupiter is used only for **single-hop pool discovery**; swap instructions are built locally. v1 accepts only low-account flat pools (Raydium AMM v4 / CPMM).
+**Quote bridging (SOL / USDC / USDT):** Jupiter is used only for **single-hop pool discovery**; swap instructions are built locally. v1 accepts low-account flat pools (Meteora DAMM v2, Raydium AMM v4 / CPMM).
 
 > Demo software — not an audited production exchange.
 
@@ -78,7 +78,7 @@ POST /api/quote
 | `[ifx]` | Mainnet program id, shared Frame |
 | `[quotes]` | WSOL / USDC / USDT mints |
 | `[venues.*]` | Three launchpad program ids |
-| `[bridge.*]` | Flat pool allowlist, `max_swap_accounts`, Jupiter `low_account_dexes` |
+| `[bridge.*]` | Flat pool allowlist (`supported_types` also drives Jupiter dex filter), `max_swap_accounts` |
 | `[jupiter]` | Single-hop pool discovery (**does not** use Jupiter swap tx) |
 | `[jito]` | `*Mev` variant tip account and amount |
 | `[priority_fee.*]` | low / medium / high CU and microLamports |

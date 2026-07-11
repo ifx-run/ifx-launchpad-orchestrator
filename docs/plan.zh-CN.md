@@ -150,7 +150,7 @@ pair(USDC, SOL) 纯 quote 互换:
 **Jupiter 发现算法（v1）：**
 
 ```text
-1. dexes = config.bridge.low_account_dexes
+1. dexes = jupiter.DexesForSupportedTypes(config.bridge.supported_types)
 2. GET /quote?onlyDirectRoutes=true&dexes=...
 3. routePlan 必须 1 步、percent=100
 4. label → PoolType；若 accounts > max_swap_accounts → 拒绝

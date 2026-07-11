@@ -150,7 +150,7 @@ USDC→SOL segment in internal-market bridge leg (USDC→SOL→A):
 **Jupiter discovery algorithm (v1):**
 
 ```text
-1. dexes = config.bridge.low_account_dexes
+1. dexes = jupiter.DexesForSupportedTypes(config.bridge.supported_types)
 2. GET /quote?onlyDirectRoutes=true&dexes=...
 3. routePlan must be 1 step, percent=100
 4. label → PoolType; if accounts > max_swap_accounts → reject

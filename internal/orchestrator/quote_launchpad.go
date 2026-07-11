@@ -292,6 +292,9 @@ func (s *Service) quotePumpLaunchpad(
 		if err != nil {
 			return launchpadQuoteOutcome{}, err
 		}
+		if curve.Complete {
+			return launchpadQuoteOutcome{}, fmt.Errorf("token graduated (bonding curve complete)")
+		}
 		global, err := pumpfun.DecodeGlobal(globalAcct.Data.GetBinary())
 		if err != nil {
 			return launchpadQuoteOutcome{}, err

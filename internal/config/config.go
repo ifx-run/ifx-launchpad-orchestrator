@@ -76,9 +76,9 @@ type BridgeConfig struct {
 	SupportedTypes   []string             `toml:"supported_types"`
 	MaxSwapAccounts  int                  `toml:"max_swap_accounts"`
 	OnlyDirectRoutes bool                 `toml:"only_direct_routes"`
-	LowAccountDexes  []string             `toml:"low_account_dexes"`
 	RaydiumAMMv4     BridgeProgramConfig  `toml:"raydium_amm_v4"`
 	RaydiumCPMM      BridgeProgramConfig  `toml:"raydium_cpmm"`
+	MeteoraDAMMv2    BridgeProgramConfig  `toml:"meteora_damm_v2"`
 	FallbackPools    []FallbackPoolConfig `toml:"fallback_pools"`
 }
 
@@ -200,7 +200,13 @@ func (c *Config) applyDefaults() {
 		c.Snapshot.BatchSize = 100
 	}
 	if c.Bridge.MaxSwapAccounts == 0 {
-		c.Bridge.MaxSwapAccounts = 13
+		c.Bridge.MaxSwapAccounts = 14
+	}
+	if c.Bridge.MeteoraDAMMv2.ProgramID == "" {
+		c.Bridge.MeteoraDAMMv2.ProgramID = "cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG"
+	}
+	if c.Bridge.MeteoraDAMMv2.SwapIxAccounts == 0 {
+		c.Bridge.MeteoraDAMMv2.SwapIxAccounts = 14
 	}
 	if c.Jupiter.APIURL == "" {
 		c.Jupiter.APIURL = "https://lite-api.jup.ag/swap/v1"

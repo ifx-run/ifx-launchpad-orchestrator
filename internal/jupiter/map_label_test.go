@@ -15,6 +15,8 @@ func TestLabelToPoolType(t *testing.T) {
 	}{
 		{"Raydium CPMM", bridge.PoolRaydiumCPMM, true},
 		{"Raydium", bridge.PoolRaydiumAMMv4, true},
+		{"Meteora DAMM v2", bridge.PoolMeteoraDAMMv2, true},
+		{"Meteora DAMM V2", bridge.PoolMeteoraDAMMv2, true},
 		{"Meteora DLMM", "", false},
 	}
 

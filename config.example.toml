@@ -54,11 +54,14 @@ program_id = "dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN"
 # Quote bridge — Jupiter discovers single-hop pool; we build swap ix (no Jupiter swap tx).
 # Prefer flat pools with few accounts — CLMM/Whirlpool/DLMM tick arrays blow tx size.
 [bridge]
-supported_types = ["raydium_amm_v4", "raydium_cpmm"]
-max_swap_accounts = 13
+supported_types = ["meteora_damm_v2", "raydium_amm_v4", "raydium_cpmm"]
+max_swap_accounts = 14
 only_direct_routes = true
-# Jupiter dexes filter — Raydium flat pools only (AMM v4 + CPMM); exclude Whirlpool/CLMM/DLMM
-low_account_dexes = ["Raydium"]
+# Jupiter dexes are derived from supported_types (no separate low_account_dexes).
+
+[bridge.meteora_damm_v2]
+program_id = "cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG"
+swap_ix_accounts = 14
 
 [bridge.raydium_amm_v4]
 program_id = "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8"

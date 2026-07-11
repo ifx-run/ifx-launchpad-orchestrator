@@ -434,6 +434,10 @@ func (s *Service) loadPumpBuildState(
 	if err != nil {
 		return
 	}
+	if curve.Complete {
+		err = fmt.Errorf("token graduated (bonding curve complete)")
+		return
+	}
 	global, err = pumpfun.DecodeGlobal(globalAcct.Data.GetBinary())
 	if err != nil {
 		return
@@ -533,11 +537,25 @@ func (s *Service) bridgeLegInstructionsWithMinOut(
 		OutputATA:    userOutATA,
 		AmountIn:     amountIn,
 		MinAmountOut: minAmountOutForBridge(quotedOut, slippageBPS, minAmountOut),
+		MintTokenPrograms: bridgeMintTokenPrograms(accounts, inputMint, outMint),
 	})
 	if err != nil {
 		return nil, err
 	}
 	return swap, nil
+}
+
+func bridgeMintTokenPrograms(
+	accounts map[solana.PublicKey]*rpc.Account,
+	mints ...solana.PublicKey,
+) map[solana.PublicKey]solana.PublicKey {
+	out := make(map[solana.PublicKey]solana.PublicKey, len(mints))
+	for _, mint := range mints {
+		if acct := accounts[mint]; acct != nil && !acct.Owner.IsZero() {
+			out[mint] = acct.Owner
+		}
+	}
+	return out
 }
 
 func (s *Service) appendPayAssetFeeTransfer(

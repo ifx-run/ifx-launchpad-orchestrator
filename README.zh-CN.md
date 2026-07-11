@@ -4,7 +4,7 @@ Go 服务 + 静态前端：用 [Ifx](https://github.com/ifx-run/ifx) 编排 **Pu
 
 **链上验证结果：** [docs/tx-verification-matrix.zh-CN.md](docs/tx-verification-matrix.zh-CN.md)（[English](docs/tx-verification-matrix.md)）
 
-**Quote 桥接（SOL / USDC / USDT）：** Jupiter 仅做**单跳池发现**；swap 指令本地构造。v1 只接账户数少的 flat 池（Raydium AMM v4 / CPMM）。
+**Quote 桥接（SOL / USDC / USDT）：** Jupiter 仅做**单跳池发现**；swap 指令本地构造。v1 接低账户 flat 池（Meteora DAMM v2、Raydium AMM v4 / CPMM）。
 
 > 演示软件，非经审计的生产交易所。
 
@@ -78,7 +78,7 @@ POST /api/quote
 | `[ifx]` | 主网 program id、公共 Frame |
 | `[quotes]` | WSOL / USDC / USDT mint |
 | `[venues.*]` | 三内盘 program id |
-| `[bridge.*]` | flat 池白名单、`max_swap_accounts`、Jupiter `low_account_dexes` |
+| `[bridge.*]` | flat 池白名单（`supported_types` 同时决定 Jupiter dex 过滤）、`max_swap_accounts` |
 | `[jupiter]` | 单跳池发现（**不**使用 Jupiter swap tx） |
 | `[jito]` | `*Mev` 变体 tip 账户与金额 |
 | `[priority_fee.*]` | low / medium / high CU 与 microLamports |

@@ -8,8 +8,9 @@ import (
 type PoolType string
 
 const (
-	PoolRaydiumAMMv4 PoolType = "raydium_amm_v4"
-	PoolRaydiumCPMM  PoolType = "raydium_cpmm"
+	PoolRaydiumAMMv4   PoolType = "raydium_amm_v4"
+	PoolRaydiumCPMM    PoolType = "raydium_cpmm"
+	PoolMeteoraDAMMv2  PoolType = "meteora_damm_v2"
 )
 
 type PoolMeta struct {
@@ -19,8 +20,9 @@ type PoolMeta struct {
 }
 
 var poolRegistry = map[PoolType]PoolMeta{
-	PoolRaydiumAMMv4: {Type: PoolRaydiumAMMv4, SwapIxAccounts: 8},
-	PoolRaydiumCPMM:  {Type: PoolRaydiumCPMM, SwapIxAccounts: 13},
+	PoolRaydiumAMMv4:  {Type: PoolRaydiumAMMv4, SwapIxAccounts: 8},
+	PoolRaydiumCPMM:   {Type: PoolRaydiumCPMM, SwapIxAccounts: 13},
+	PoolMeteoraDAMMv2: {Type: PoolMeteoraDAMMv2, SwapIxAccounts: 14},
 }
 
 func ParsePoolType(s string) (PoolType, error) {

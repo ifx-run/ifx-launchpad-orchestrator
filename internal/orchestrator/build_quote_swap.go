@@ -101,13 +101,14 @@ func (s *Service) buildQuoteSwap(
 
 	router := bridge.NewRouter(s.cfg)
 	swapIx, err := router.BuildSwap(bridge.SwapBuildParams{
-		Pool:         pool,
-		PoolAccount:  poolAcct,
-		User:         user,
-		InputATA:     userInATA,
-		OutputATA:    userOutATA,
-		AmountIn:     inputRaw,
-		MinAmountOut: minOut,
+		Pool:              pool,
+		PoolAccount:       poolAcct,
+		User:              user,
+		InputATA:          userInATA,
+		OutputATA:         userOutATA,
+		AmountIn:          inputRaw,
+		MinAmountOut:      minOut,
+		MintTokenPrograms: bridgeMintTokenPrograms(accounts, inMint, outMint),
 	})
 	if err != nil {
 		return nil, err
